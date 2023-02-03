@@ -21,6 +21,9 @@ class RetryOperation extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-param array<string, mixed> $options
+   * @phpstan-return void
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
     parent::init($view, $display, $options);
@@ -32,6 +35,8 @@ class RetryOperation extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-return void
    */
   public function query() {
     $this->ensureMyTable();
