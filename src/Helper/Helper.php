@@ -72,6 +72,8 @@ class Helper {
    *
    * @return array
    *   A list of jobs.
+   *
+   * @phpstan-return array
    */
   public function getAllJobs():array {
     $query = $this->connection->select('advancedqueue', 'a');
