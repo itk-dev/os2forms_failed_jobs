@@ -105,8 +105,11 @@ class RetryJob extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-param array<string, mixed> $form
+   * @phpstan-return array<string, mixed>
    */
-  public function buildForm(array $form, FormStateInterface $form_state, QueueInterface $advancedqueue_queue = NULL, $job_id = NULL): array {
+  public function buildForm(array $form, FormStateInterface $form_state, QueueInterface $advancedqueue_queue = NULL, int $job_id = NULL): array {
     $this->queue = $advancedqueue_queue;
     $this->jobId = $job_id;
 
@@ -115,6 +118,9 @@ class RetryJob extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-param array<string, mixed> $form
+   * @phpstan-return void
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $queue_backend = $this->queue->getBackend();

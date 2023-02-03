@@ -39,7 +39,7 @@ class Helper {
   public function getJobFromId(int $jobId): Job {
     $query = $this->connection->select('advancedqueue', 'a');
     $query->fields('a');
-    $query->condition('job_id', $jobId, '=');
+    $query->condition('job_id', (string) $jobId, '=');
     $definition = $query->execute()->fetchAssoc();
 
     // Match Job constructor id.
@@ -72,6 +72,8 @@ class Helper {
    *
    * @return array
    *   A list of jobs.
+   *
+   * @phpstan-return array<int, \stdClass>
    */
   public function getAllJobs():array {
     $query = $this->connection->select('advancedqueue', 'a');

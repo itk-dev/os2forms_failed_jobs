@@ -68,6 +68,8 @@ class Controller extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Exception
+   *
+   * @phpstan-return array<string, mixed>
    */
   public function render(): array {
     $view = Views::getView('os2forms_failed_jobs');
@@ -103,6 +105,8 @@ class Controller extends ControllerBase {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
+   * @phpstan-return array<string, mixed>
    */
   private function getQueueJobIds(string $formId): array {
     $submissionIdsFromForm = $this->getSubmissionsFromForm($formId);
@@ -131,6 +135,8 @@ class Controller extends ControllerBase {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
+   * @phpstan-return array<int, string>
    */
   private function getSubmissionsFromForm(string $formId): array {
     return $this->entityTypeManager

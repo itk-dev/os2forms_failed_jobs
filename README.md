@@ -17,7 +17,7 @@ drush pm:enable os2forms_failed_jobs
 ## Usage
 
 A new tab should appear in each webforms results menu.
-- All failed jobs from advanced queue related to the webform will be displayed.
+- All failed jobs from advanced queue related to the webform are displayed.
 - Each job can be retried which will re-queue the job in the advanced queue.
 
 ## Coding standards
