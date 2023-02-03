@@ -99,11 +99,11 @@ jobs:
           mkdir -p drupal/web/modules/contrib/os2forms_failed_jobs
           cp -r os2forms_failed_jobs.* composer.json src drupal/web/modules/contrib/os2forms_failed_jobs
           # Add our module as a composer repository.
-          composer --no-interaction --working-dir=drupal config repositories.os2forms/os2forms_failed_jobs path web/modules/contrib/os2forms_failed_jobs
+          composer --no-interaction --working-dir=drupal config repositories.itk-dev/os2forms_failed_jobs path web/modules/contrib/os2forms_failed_jobs
           # Restore Drupal composer repository.
           composer --no-interaction --working-dir=drupal config repositories.drupal composer https://packages.drupal.org/8
           # Require our module.
-          composer --no-interaction --working-dir=drupal require 'os2forms/os2forms_failed_jobs:*'
+          composer --no-interaction --working-dir=drupal require 'itk-dev/os2forms_failed_jobs:*'
           # Check code
           composer --no-interaction --working-dir=drupal require --dev drupal/core-dev
           cd drupal/web/modules/contrib/os2forms_failed_jobs
