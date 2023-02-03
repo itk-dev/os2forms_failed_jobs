@@ -78,8 +78,6 @@ class Helper {
   public function getAllJobs():array {
     $query = $this->connection->select('advancedqueue', 'a');
     $query->fields('a', ['payload', 'job_id']);
-    $b = $query->execute()->fetchAll();
-    $a = 1;
 
     return $query->execute()->fetchAll();
   }
