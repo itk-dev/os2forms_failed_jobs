@@ -136,7 +136,7 @@ class Controller extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
-   * @phpstan-return array<string, mixed>
+   * @phpstan-return array<int, string>
    */
   private function getSubmissionsFromForm(string $formId): array {
     return $this->entityTypeManager

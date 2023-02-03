@@ -120,6 +120,7 @@ class RetryJob extends ConfirmFormBase {
    * {@inheritdoc}
    *
    * @phpstan-param array<string, mixed> $form
+   * @phpstan-return void
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $queue_backend = $this->queue->getBackend();
