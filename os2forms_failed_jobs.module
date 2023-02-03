@@ -8,7 +8,7 @@
 /**
  * Implements hook_views_data().
  */
-function os2forms_failed_jobs_views_data() {
+function os2forms_failed_jobs_views_data(): array {
   $data['advancedqueue']['retry_operation'] = [
     'title' => t('Retry operation'),
     'help' => t('Provides available operations'),
