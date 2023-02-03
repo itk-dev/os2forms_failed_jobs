@@ -7,6 +7,8 @@
 
 /**
  * Implements hook_views_data().
+ *
+ * @phpstan-return array<string, mixed>
  */
 function os2forms_failed_jobs_views_data(): array {
   $data['advancedqueue']['retry_operation'] = [
