@@ -47,7 +47,7 @@ class RetryOperation extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function access(AccountInterface $account) {
-    return TRUE;
+    return $account->hasPermission('access webform submission log');
   }
 
   /**
