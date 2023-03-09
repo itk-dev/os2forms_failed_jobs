@@ -189,7 +189,7 @@ class Helper {
    * @param array $data
    *   An array of data to put into os2forms_queue_submission_relation table.
    *
-   * @phpstan-param array $data
+   * @phpstan-param array<string, mixed> $data
    */
   private function addRelation(array $data): void {
     if (empty($data['job_id']) || empty($data['submission_id'])) {
