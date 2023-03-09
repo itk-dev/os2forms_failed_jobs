@@ -171,8 +171,8 @@ class Helper {
       return [
         'submission_id' => $submissionId,
         'webform_id' => $this->getWebformSubmission($submissionId)
-          ?->getWebform()
-          ?->id(),
+        ?->getWebform()
+        ?->id(),
       ];
     }
     catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
@@ -222,7 +222,7 @@ class Helper {
     $jobEntries = $query->execute()->fetchAllAssoc('job_id');
 
     foreach ($jobEntries as $entry) {
-      $definition = (array)$entry;
+      $definition = (array) $entry;
       // Match Job constructor id.
       $definition['id'] = $entry->job_id;
 
@@ -264,7 +264,10 @@ class Helper {
   }
 
   /**
+   * Get all relations from the os2forms_queue_submission_relation table.
+   *
    * @return array
+   *   A list of all relations.
    */
   private function getAllRelations(): array {
     $query = $this->connection->select('os2forms_queue_submission_relation', 'o');
@@ -272,4 +275,5 @@ class Helper {
 
     return $query->execute()->fetchAllAssoc('job_id');
   }
+
 }

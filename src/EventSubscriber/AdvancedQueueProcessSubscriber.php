@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 
 /**
- * Class AdvancedQueueProcessSubscriber.
+ * Subscribe to AdvancedQueue processing events.
  *
  * @package Drupal\os2forms_failed_jobs\EventSubscriber
  */

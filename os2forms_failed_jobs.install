@@ -45,7 +45,6 @@ function os2forms_failed_jobs_schema(): array {
   return $schema;
 }
 
-
 /**
  * Add os2forms_queue_submission_relation table.
  */

@@ -95,7 +95,7 @@ final class RetryJob extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl(): Url {
-    $webform = $this->helper->getWebformIdFromQueue((string)$this->jobId);
+    $webform = $this->helper->getWebformIdFromQueue((string) $this->jobId);
 
     return Url::fromRoute('entity.webform.error_log', ['webform' => $webform]);
   }
