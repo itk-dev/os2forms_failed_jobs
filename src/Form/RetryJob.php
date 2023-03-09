@@ -17,7 +17,7 @@ use Drupal\os2forms_failed_jobs\Helper\Helper;
 /**
  * Provides a confirmation form for retrying a job.
  */
-class RetryJob extends ConfirmFormBase {
+final class RetryJob extends ConfirmFormBase {
 
   /**
    * The queue.
@@ -52,22 +52,22 @@ class RetryJob extends ConfirmFormBase {
    *
    * @var \Drupal\os2forms_failed_jobs\Helper\Helper
    */
-  protected Helper $failedJobsHelper;
+  protected Helper $helper;
 
   /**
    * Retry job constructor.
    */
-  public function __construct(Connection $database, EntityTypeManager $entityTypeManager, Helper $failedJobsHelper) {
+  public function __construct(Connection $database, EntityTypeManager $entityTypeManager, Helper $helper) {
     $this->database = $database;
     $this->entityTypeManager = $entityTypeManager;
-    $this->failedJobsHelper = $failedJobsHelper;
+    $this->helper = $helper;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): RetryJob {
-    return new static(
+    return new RetryJob(
       $container->get('database'),
       $container->get('entity_type.manager'),
       $container->get(Helper::class),
@@ -95,12 +95,9 @@ class RetryJob extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl(): Url {
-    $submissionId = $this->failedJobsHelper->getSubmissionIdFromJob($this->jobId);
-    /** @var \Drupal\webform\WebformSubmissionInterface $submission */
-    $submission = $this->entityTypeManager->getStorage('webform_submission')->load($submissionId);
-    $webform = $submission->getWebform();
+    $webform = $this->helper->getWebformIdFromQueue((string)$this->jobId);
 
-    return Url::fromRoute('entity.webform.error_log', ['webform' => $webform->id()]);
+    return Url::fromRoute('entity.webform.error_log', ['webform' => $webform]);
   }
 
   /**
@@ -125,7 +122,7 @@ class RetryJob extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $queue_backend = $this->queue->getBackend();
     if ($queue_backend instanceof Database) {
-      $job = $this->failedJobsHelper->getJobFromId($this->jobId);
+      $job = $this->helper->getJobFromId($this->jobId);
 
       if ($job->getState() != Job::STATE_FAILURE) {
         throw new \InvalidArgumentException('Only failed jobs can be retried.');
