@@ -160,6 +160,9 @@ class Helper {
    *
    * @return array|null
    *   An array containing submission id and webform id.
+   *
+   * @phpstan-param array<string, mixed> $payload
+   * @phpstan-return array<string, mixed>
    */
   private function getDataFromPayload(array $payload): ?array {
     $submissionId = $this->getSubmissionId($payload);
@@ -185,6 +188,8 @@ class Helper {
    *
    * @param array $data
    *   An array of data to put into os2forms_queue_submission_relation table.
+   *
+   * @phpstan-param array $data
    */
   private function addRelation(array $data): void {
     if (empty($data['job_id']) || empty($data['submission_id'])) {
@@ -213,6 +218,8 @@ class Helper {
    *
    * @return array
    *   A list of all entries from the advanced queue table.
+   *
+   * @phpstan-return array<int, mixed>
    */
   private function getAllQueueJobs(): array {
     $query = $this->connection->select('advancedqueue', 'q');
@@ -242,6 +249,8 @@ class Helper {
    *
    * @return int|null
    *   A webform submission id.
+   *
+   * @phpstan-param array<string, mixed> $payload
    */
   private function getSubmissionId(array $payload): ?int {
     return $payload['submissionId'] ?? $payload['submission']['id'] ?? NULL;
@@ -268,6 +277,8 @@ class Helper {
    *
    * @return array
    *   A list of all relations.
+   *
+   * @phpstan-return array<int, mixed>
    */
   private function getAllRelations(): array {
     $query = $this->connection->select('os2forms_queue_submission_relation', 'o');
