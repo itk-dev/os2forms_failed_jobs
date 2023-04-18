@@ -1,11 +1,11 @@
 <?php
 
-use Drupal\os2forms_failed_jobs\Helper\Helper;
-
 /**
  * @file
  * Code related to installing and updating this module.
  */
+
+use Drupal\os2forms_failed_jobs\Helper\Helper;
 
 /**
  * Implements hook_schema().
