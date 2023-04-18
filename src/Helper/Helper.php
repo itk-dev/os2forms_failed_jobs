@@ -189,9 +189,7 @@ class Helper {
     try {
       return [
         'submission_id' => $submissionId,
-        'webform_id' => $this->getWebformSubmission($submissionId)
-        ?->getWebform()
-        ?->id(),
+        'webform_id' => $this->getWebformSubmission($submissionId)->getWebform()->id(),
       ];
     }
     catch (\Exception $e) {
