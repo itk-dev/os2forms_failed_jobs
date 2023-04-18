@@ -11,7 +11,7 @@
  * @phpstan-return array<string, mixed>
  */
 function os2forms_failed_jobs_schema(): array {
-  $schema['os2forms_queue_submission_relation'] = [
+  $schema['os2forms_failed_jobs_queue_submission_relation'] = [
     'description' => 'A table to relate advanced queue job ids to webform submission ids',
     'fields' => [
       'job_id' => [
@@ -48,13 +48,13 @@ function os2forms_failed_jobs_schema(): array {
 }
 
 /**
- * Add os2forms_queue_submission_relation table.
+ * Add os2forms_failed_jobs_queue_submission_relation table.
  */
 function os2forms_failed_jobs_update_9001(): void {
   $database = \Drupal::database();
   $schema = $database->schema();
 
-  $table_name = 'os2forms_queue_submission_relation';
+  $table_name = 'os2forms_failed_jobs_queue_submission_relation';
   $table_schema = [
     'description' => 'A table to relate advanced queue job ids to webform submission ids',
     'fields' => [

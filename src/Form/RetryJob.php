@@ -67,7 +67,7 @@ final class RetryJob extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): RetryJob {
-    return new RetryJob(
+    return new static(
       $container->get('database'),
       $container->get('entity_type.manager'),
       $container->get(Helper::class),

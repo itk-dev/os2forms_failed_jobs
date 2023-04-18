@@ -7,7 +7,6 @@ services:
     ]
 
   Drupal\os2forms_failed_jobs\EventSubscriber\AdvancedQueueEventsSubscriber:
-    class: Drupal\os2forms_failed_jobs\EventSubscriber\AdvancedQueueProcessSubscriber
     arguments: [ '@Drupal\os2forms_failed_jobs\Helper\Helper' ]
     tags:
       - { name: event_subscriber }

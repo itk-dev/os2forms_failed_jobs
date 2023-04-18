@@ -104,7 +104,7 @@ class Helper {
    * @phpstan-return array<string, mixed>
    */
   public function getQueueJobIds(string $formId): array {
-    $query = $this->connection->select('os2forms_queue_submission_relation', 'o');
+    $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
     $query->fields('o', ['job_id']);
     $query->condition('webform_id', $formId, '=');
 
@@ -118,10 +118,28 @@ class Helper {
    *   The job about to be processed.
    */
   public function handleJob(Job $job): void {
-    $data = $this->getDataFromPayload($job->getPayload());
+    $data = $this->getDataFromJob($job);
     if ($data) {
       $data['job_id'] = (int) $job->getId();
-      $this->addRelation($data);
+      if (empty($data['job_id']) || empty($data['submission_id'])) {
+        return;
+      }
+
+      if (array_key_exists($data['job_id'], $this->getAllRelations())) {
+        return;
+      }
+
+      try {
+        $this->connection->upsert('os2forms_failed_jobs_queue_submission_relation')
+          ->key('job_id')
+          ->fields($data)
+          ->execute();
+      }
+      catch (\Exception $e) {
+        $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
+          ->error(
+            'Error adding releation: %message', ['%message' => $e->getMessage()]);
+      }
     }
   }
 
@@ -145,7 +163,7 @@ class Helper {
    *   The webform id.
    */
   public function getWebformIdFromQueue(string $jobId): string {
-    $query = $this->connection->select('os2forms_queue_submission_relation', 'o');
+    $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
     $query->condition('job_id', $jobId, '=');
     $query->fields('o', ['webform_id']);
 
@@ -155,16 +173,16 @@ class Helper {
   /**
    * Retrieve data from advanced queue job.
    *
-   * @param array $payload
-   *   The payload from an advanced queue job.
+   * @param \Drupal\advancedqueue\Job $job
+   *   The job about to be processed.
    *
    * @return array|null
    *   An array containing submission id and webform id.
    *
-   * @phpstan-param array<string, mixed> $payload
    * @phpstan-return array<string, mixed>
    */
-  private function getDataFromPayload(array $payload): ?array {
+  private function getDataFromJob(Job $job): ?array {
+    $payload = $job->getPayload();
     $submissionId = $this->getSubmissionId($payload);
     if (empty($submissionId)) {
       return NULL;
@@ -178,38 +196,8 @@ class Helper {
         ?->id(),
       ];
     }
-    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
-      return NULL;
-    }
-  }
-
-  /**
-   * Add advanced queue and submission relation.
-   *
-   * @param array $data
-   *   An array of data to put into os2forms_queue_submission_relation table.
-   *
-   * @phpstan-param array<string, mixed> $data
-   */
-  private function addRelation(array $data): void {
-    if (empty($data['job_id']) || empty($data['submission_id'])) {
-      return;
-    }
-
-    if (array_key_exists($data['job_id'], $this->getAllRelations())) {
-      return;
-    }
-
-    try {
-      $this->connection->upsert('os2forms_queue_submission_relation')
-        ->key('job_id')
-        ->fields($data)
-        ->execute();
-    }
     catch (\Exception $e) {
-      $this->loggerFactory->get('os2forms_queue_submission_relation')
-        ->error(
-          'Error adding releation: %message', ['%message' => $e->getMessage()]);
+      return NULL;
     }
   }
 
@@ -273,7 +261,7 @@ class Helper {
   }
 
   /**
-   * Get all relations from the os2forms_queue_submission_relation table.
+   * Get all relations from the os2forms_failed_jobs_queue_submission_relation table.
    *
    * @return array
    *   A list of all relations.
@@ -281,7 +269,7 @@ class Helper {
    * @phpstan-return array<int, mixed>
    */
   private function getAllRelations(): array {
-    $query = $this->connection->select('os2forms_queue_submission_relation', 'o');
+    $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
     $query->fields('o');
 
     return $query->execute()->fetchAllAssoc('job_id');
