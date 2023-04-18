@@ -32,7 +32,7 @@ class Os2formsFailedJobsCommands extends DrushCommands {
    *
    * @command os2forms_failed_jobs:import
    */
-  public function import() {
+  public function import(): void {
     $this->helper->handleImport();
   }
 
