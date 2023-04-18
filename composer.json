@@ -19,6 +19,7 @@
     ],
     "require": {
         "drupal/advancedqueue": "^1.0",
+        "drush/drush": "^10.6",
         "drupal/webform": "^6.0"
     },
     "require-dev": {
