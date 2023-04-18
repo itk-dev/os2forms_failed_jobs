@@ -5,6 +5,8 @@
  * Code related to installing and updating this module.
  */
 
+use Drupal\os2forms_failed_jobs\Helper\Helper;
+
 /**
  * Implements hook_schema().
  *
@@ -45,6 +47,13 @@ function os2forms_failed_jobs_schema(): array {
   ];
 
   return $schema;
+}
+
+/**
+ * Add existing queue elements to new table.
+ */
+function os2forms_failed_jobs_install(): void {
+  Drupal::service(Helper::class)->handleImport();
 }
 
 /**
@@ -89,4 +98,11 @@ function os2forms_failed_jobs_update_9001(): void {
   ];
 
   $schema->createTable($table_name, $table_schema);
+}
+
+/**
+ * Add existing queue elements to new table.
+ */
+function os2forms_failed_jobs_update_9002(): void {
+  Drupal::service(Helper::class)->handleImport();
 }
