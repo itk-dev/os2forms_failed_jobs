@@ -165,7 +165,7 @@ class Helper {
     $query->condition('job_id', $jobId, '=');
     $query->fields('o', ['webform_id']);
 
-    return $query->execute()->fetchObject()->webform_id;
+    return $query->execute()?->fetchObject()?->webform_id;
   }
 
   /**
@@ -189,7 +189,9 @@ class Helper {
     try {
       return [
         'submission_id' => $submissionId,
-        'webform_id' => $this->getWebformSubmission($submissionId)->getWebform()->id(),
+        'webform_id' => $this->getWebformSubmission($submissionId)
+        ?->getWebform()
+        ?->id(),
       ];
     }
     catch (\Exception $e) {
