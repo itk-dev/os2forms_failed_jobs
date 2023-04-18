@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * @file
+ * Code related to installing and updating this module.
+ */
+
+/**
+ * Implements hook_schema().
+ *
+ * @phpstan-return array<string, mixed>
+ */
+function os2forms_failed_jobs_schema(): array {
+  $schema['os2forms_failed_jobs_queue_submission_relation'] = [
+    'description' => 'A table to relate advanced queue job ids to webform submission ids',
+    'fields' => [
+      'job_id' => [
+        'description' => 'Job id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'submission_id' => [
+        'description' => 'Submission id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'webform_id' => [
+        'description' => 'The webform id',
+        'type' => 'varchar_ascii',
+        'length' => '128',
+      ],
+    ],
+    'indexes' => [
+      'job_id' => [
+        'job_id',
+      ],
+      'submission_id' => [
+        'submission_id',
+      ],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Add os2forms_failed_jobs_queue_submission_relation table.
+ */
+function os2forms_failed_jobs_update_9001(): void {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+
+  $table_name = 'os2forms_failed_jobs_queue_submission_relation';
+  $table_schema = [
+    'description' => 'A table to relate advanced queue job ids to webform submission ids',
+    'fields' => [
+      'job_id' => [
+        'description' => 'Job id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'submission_id' => [
+        'description' => 'Submission id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'webform_id' => [
+        'description' => 'The webform id',
+        'type' => 'varchar_ascii',
+        'length' => '128',
+      ],
+    ],
+    'indexes' => [
+      'job_id' => [
+        'job_id',
+      ],
+      'submission_id' => [
+        'submission_id',
+      ],
+    ],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+}
