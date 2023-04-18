@@ -3,8 +3,6 @@
 namespace Drupal\os2forms_failed_jobs\Helper;
 
 use Drupal\advancedqueue\Job;
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
@@ -261,7 +259,7 @@ class Helper {
   }
 
   /**
-   * Get all relations from the os2forms_failed_jobs_queue_submission_relation table.
+   * Get all relations from the table.
    *
    * @return array
    *   A list of all relations.
