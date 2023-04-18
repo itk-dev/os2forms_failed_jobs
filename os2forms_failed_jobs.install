@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\os2forms_failed_jobs\Helper\Helper;
+
 /**
  * @file
  * Code related to installing and updating this module.
@@ -48,6 +50,13 @@ function os2forms_failed_jobs_schema(): array {
 }
 
 /**
+ * Add existing queue elements to new table.
+ */
+function os2forms_failed_jobs_install(): void {
+  \Drupal::getContainer()->get(Helper::class)->handleImport();
+}
+
+/**
  * Add os2forms_failed_jobs_queue_submission_relation table.
  */
 function os2forms_failed_jobs_update_9001(): void {
@@ -89,4 +98,11 @@ function os2forms_failed_jobs_update_9001(): void {
   ];
 
   $schema->createTable($table_name, $table_schema);
+}
+
+/**
+ * Add existing queue elements to new table.
+ */
+function os2forms_failed_jobs_update_9002(): void {
+  \Drupal::getContainer()->get(Helper::class)->handleImport();
 }
