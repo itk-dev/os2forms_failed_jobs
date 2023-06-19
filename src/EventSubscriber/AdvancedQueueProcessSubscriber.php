@@ -4,8 +4,8 @@ namespace Drupal\os2forms_failed_jobs\EventSubscriber;
 
 use Drupal\advancedqueue\Event\AdvancedQueueEvents;
 use Drupal\advancedqueue\Event\JobEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Subscribe to AdvancedQueue processing events.
