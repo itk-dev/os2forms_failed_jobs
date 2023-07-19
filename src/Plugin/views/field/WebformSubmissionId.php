@@ -30,6 +30,8 @@ class WebformSubmissionId extends FieldPluginBase {
 
   /**
    * Class constructor.
+   *
+   * @phpstan-param array $configuration
    */
   final public function __construct($configuration, $plugin_id, $plugin_definition, Helper $helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -39,6 +41,8 @@ class WebformSubmissionId extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-param array $configuration
    */
   public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(

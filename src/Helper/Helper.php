@@ -9,7 +9,6 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\webform\WebformInterface;
 
 /**
  * Helper for managing failed jobs.
