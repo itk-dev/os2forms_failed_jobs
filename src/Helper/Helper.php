@@ -2,11 +2,11 @@
 
 namespace Drupal\os2forms_failed_jobs\Helper;
 
+use Drupal\advancedqueue\Job;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\advancedqueue\Job;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
 
@@ -316,7 +316,7 @@ class Helper {
    * @param int $submissionId
    *   Id of a submission.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|null A webform id.
+   * @return \Drupal\Core\Entity\EntityInterface|null
    *   A webform id.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
