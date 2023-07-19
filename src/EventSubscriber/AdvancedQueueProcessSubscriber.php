@@ -45,9 +45,6 @@ class AdvancedQueueProcessSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\advancedqueue\Event\JobEvent $event
    *   The job that is about to be processed.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function onQueuePreProcess(JobEvent $event) :void {
     $this->helper->handleJob($event->getJob());

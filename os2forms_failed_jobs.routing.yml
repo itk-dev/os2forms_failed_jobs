@@ -8,7 +8,7 @@ entity.webform.error_log:
       webform:
         type: 'entity:webform'
   requirements:
-    _permission: 'access webform submission log'
+    _permission: 'access webform advanced queue overview'
     _entity_access: 'webform.submission_view_any'
     _custom_access: '\Drupal\webform\Access\WebformEntityAccess:checkLogAccess'
 
@@ -18,4 +18,19 @@ advancedqueue.job.retry:
     _form: '\Drupal\os2forms_failed_jobs\Form\RetryJob'
     _title: 'Retry job'
   requirements:
-    _permission: 'access webform submission log'
+    _permission: 'access webform advanced queue overview'
+
+os2forms_failed_jobs.advancedqueue.job.message:
+  path: '/os2forms_failed_jobs/{webform}/jobs/{job_id}/message'
+  defaults:
+    _controller: '\Drupal\os2forms_failed_jobs\Controller\Controller::jobMessage'
+    _title: 'Message'
+  options:
+    no_cache: TRUE
+    parameters:
+      webform:
+        type: 'entity:webform'
+  requirements:
+    _permission: 'access webform advanced queue overview'
+    _entity_access: 'webform.submission_view_any'
+    _custom_access: '\Drupal\webform\Access\WebformEntityAccess:checkLogAccess'

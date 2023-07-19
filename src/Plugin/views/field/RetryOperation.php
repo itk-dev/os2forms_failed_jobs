@@ -2,7 +2,9 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 
+use Drupal\views\Render\ViewsRenderPipelineMarkup;
 use Drupal\advancedqueue\Job;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
@@ -25,7 +27,7 @@ class RetryOperation extends FieldPluginBase {
    * @phpstan-param array<string, mixed> $options
    * @phpstan-return void
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL): void {
     parent::init($view, $display, $options);
 
     $this->additional_fields['state'] = 'state';
@@ -38,7 +40,7 @@ class RetryOperation extends FieldPluginBase {
    *
    * @phpstan-return void
    */
-  public function query() {
+  public function query(): void {
     $this->ensureMyTable();
     $this->addAdditionalFields();
   }
@@ -47,7 +49,7 @@ class RetryOperation extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function access(AccountInterface $account) {
-    return $account->hasPermission('access webform submission log');
+    return $account->hasPermission('access webform advanced queue overview');
   }
 
   /**
@@ -55,7 +57,7 @@ class RetryOperation extends FieldPluginBase {
    *
    * @throws \Exception
    */
-  public function render(ResultRow $values) {
+  public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
     $operations = [];
 
     $state = $this->getValue($values, 'state');

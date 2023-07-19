@@ -106,8 +106,8 @@ final class RetryJob extends ConfirmFormBase {
    * @phpstan-param array<string, mixed> $form
    * @phpstan-return array<string, mixed>
    */
-  public function buildForm(array $form, FormStateInterface $form_state, QueueInterface $advancedqueue_queue = NULL, int $job_id = NULL): array {
-    $this->queue = $advancedqueue_queue;
+  public function buildForm(array $form, FormStateInterface $form_state, QueueInterface $advancedqueueQueue = NULL, int $job_id = NULL): array {
+    $this->queue = $advancedqueueQueue;
     $this->jobId = $job_id;
 
     return parent::buildForm($form, $form_state);
@@ -122,7 +122,7 @@ final class RetryJob extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $queue_backend = $this->queue->getBackend();
     if ($queue_backend instanceof Database) {
-      $job = $this->helper->getJobFromId($this->jobId);
+      $job = $this->helper->getJobFromId((string) $this->jobId);
 
       if ($job->getState() != Job::STATE_FAILURE) {
         throw new \InvalidArgumentException('Only failed jobs can be retried.');
