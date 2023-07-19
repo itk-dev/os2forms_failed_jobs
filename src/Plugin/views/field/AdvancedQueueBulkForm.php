@@ -31,7 +31,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
    * {@inheritdoc}
    */
   public function __construct(
-    array $configuration,
+    $configuration,
     $plugin_id,
     $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
@@ -56,7 +56,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
@@ -72,7 +72,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL): void {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, &$options = NULL): void {
     parent::init($view, $display, $options);
 
     $entity_type = $this->getEntityType();
@@ -87,7 +87,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query(): void {
   }
 
   /**

@@ -31,7 +31,7 @@ class WebformSubmissionId extends FieldPluginBase {
   /**
    * Class constructor.
    */
-  final public function __construct(array $configuration, $plugin_id, $plugin_definition, Helper $helper) {
+  final public function __construct($configuration, $plugin_id, $plugin_definition, Helper $helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->helper = $helper;
@@ -40,7 +40,7 @@ class WebformSubmissionId extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,

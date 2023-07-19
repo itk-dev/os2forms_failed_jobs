@@ -34,7 +34,7 @@ final class SubmissionSerialFilter extends StringFilter {
   /**
    * Class constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $connection, Helper $helper, RouteMatchInterface $route_match) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $connection, Helper $helper, RouteMatchInterface $route_match) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $connection);
 
     $this->helper = $helper;
@@ -44,7 +44,7 @@ final class SubmissionSerialFilter extends StringFilter {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,

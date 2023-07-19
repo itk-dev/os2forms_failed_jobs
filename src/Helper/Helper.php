@@ -9,6 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\webform\WebformInterface;
 
 /**
  * Helper for managing failed jobs.
@@ -185,6 +186,7 @@ class Helper {
       $submission = $this->getWebformSubmission($submissionId);
 
       if (!empty($submission)) {
+        /** @var \Drupal\webform\WebformSubmissionInterface $submission */
         return $submission->serial();
       }
     }
@@ -204,6 +206,8 @@ class Helper {
    *
    * @return array
    *   A list of matching jobs.
+   *
+   * @phpstan-return array<int, mixed>
    */
   public function getQueueJobIdsFromSubmissionId(string $submissionId): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
@@ -223,6 +227,8 @@ class Helper {
    *
    * @return array
    *   A list of matching jobs.
+   *
+   * @phpstan-return array<int, mixed>
    */
   public function getQueueJobIdsFromSerial(string $serial, string $webformId): array {
     $query = $this->connection->select('webform_submission', 'w');
@@ -255,11 +261,12 @@ class Helper {
     }
 
     try {
+      /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+      $submission = $this->getWebformSubmission($submissionId);
+
       return [
         'submission_id' => $submissionId,
-        'webform_id' => $this->getWebformSubmission($submissionId)
-        ?->getWebform()
-        ?->id(),
+        'webform_id' => $submission->getWebform()->id(),
       ];
     }
     catch (\Exception $e) {
