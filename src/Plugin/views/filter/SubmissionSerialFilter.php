@@ -4,9 +4,9 @@ namespace Drupal\os2forms_failed_jobs\Plugin\views\filter;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Plugin\views\filter\StringFilter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filter by submission serial.

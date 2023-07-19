@@ -3,12 +3,12 @@
 namespace Drupal\os2forms_failed_jobs\Plugin\Action;
 
 use Drupal\advancedqueue\ProcessorInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Action\ActionBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Unblocks a user.
