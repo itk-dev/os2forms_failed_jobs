@@ -48,7 +48,7 @@ final class Controller extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Instantiates a new instance of os2forms_failed_jobs controller.
    */
   public static function create(ContainerInterface $container) {
     return new static(

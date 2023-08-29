@@ -46,7 +46,7 @@ final class SubmissionSerialFilter extends StringFilter {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $configuration
+   * @phpstan-param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(
