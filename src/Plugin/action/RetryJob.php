@@ -45,7 +45,7 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $configuration
+   * @phpstan-param array<string, mixed> $configuration
    */
   public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ProcessorInterface $processor, Helper $helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -58,7 +58,7 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $configuration
+   * @phpstan-param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(

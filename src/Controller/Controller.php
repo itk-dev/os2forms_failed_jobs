@@ -50,7 +50,7 @@ final class Controller extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container): Controller {
+  public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager'),
       $container->get(Helper::class),

@@ -34,7 +34,7 @@ final class SubmissionSerialFilter extends StringFilter {
   /**
    * Class constructor.
    *
-   * @phpstan-param array $configuration
+   * @phpstan-param array<string, mixed> $configuration
    */
   public function __construct($configuration, $plugin_id, $plugin_definition, Connection $connection, Helper $helper, RouteMatchInterface $route_match) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $connection);

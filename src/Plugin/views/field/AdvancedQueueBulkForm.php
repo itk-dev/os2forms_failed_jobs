@@ -30,7 +30,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $configuration
+   * @phpstan-param array<string, mixed> $configuration
    */
   public function __construct(
     $configuration,
@@ -58,7 +58,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $configuration
+   * @phpstan-param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(
@@ -76,7 +76,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $options
+   * @phpstan-param array<string, mixed> $options
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, &$options = NULL): void {
     parent::init($view, $display, $options);
@@ -106,7 +106,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $form
+   * @phpstan-param array<string, mixed> $form
    */
   public function viewsForm(&$form, FormStateInterface $form_state): void {
     // Make sure we do not accidentally cache this form.
@@ -162,7 +162,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array $form
+   * @phpstan-param array<string, mixed> $form
    */
   public function viewsFormSubmit(&$form, FormStateInterface $form_state): void {
     if ($form_state->get('step') == 'views_form_views_form') {
