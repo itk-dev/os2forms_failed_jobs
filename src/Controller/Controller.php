@@ -85,7 +85,7 @@ final class Controller extends ControllerBase {
   /**
    * Get the message related to an advanced queue job.
    *
-   * @return array
+   * @return array<string, array>
    *   The rendered message.
    *
    * @phpstan-return array<string, array>
