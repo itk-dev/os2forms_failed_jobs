@@ -2,6 +2,9 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\Action;
 
+use Drupal\advancedqueue\Entity\QueueInterface;
+use Drupal\advancedqueue\Job;
+use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\advancedqueue\ProcessorInterface;
 use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -20,6 +23,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 final class RetryJob extends ActionBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The queue.
+   *
+   * @var \Drupal\advancedqueue\Entity\QueueInterface
+   */
+  protected QueueInterface $queue;
 
   /**
    * The entity type manager.
@@ -82,8 +92,14 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
     /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
     $queue = $queue_storage->load($queue_id);
 
-    // @todo This doesn't work as expected.
-    $this->processor->processJob($job, $queue);
+    $queue_backend = $queue->getBackend();
+    if ($queue_backend instanceof Database) {
+      if ($job->getState() != Job::STATE_FAILURE) {
+        return;
+      }
+
+      $queue_backend->retryJob($job);
+    }
   }
 
   /**
