@@ -85,7 +85,7 @@ final class Controller extends ControllerBase {
   /**
    * Get the message related to an advanced queue job.
    *
-   * @return array<string, array>
+   * @return array<string, mixed>
    *   The rendered message.
    */
   public function jobMessage(): array {
