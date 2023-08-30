@@ -48,9 +48,9 @@ final class Controller extends ControllerBase {
   }
 
   /**
-   * Instantiates a new instance of os2forms_failed_jobs controller.
+   * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): Controller {
     return new static(
       $container->get('entity_type.manager'),
       $container->get(Helper::class),
