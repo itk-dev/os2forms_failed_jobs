@@ -85,10 +85,8 @@ final class Controller extends ControllerBase {
   /**
    * Get the message related to an advanced queue job.
    *
-   * @return array
+   * @return array<string, array>
    *   The rendered message.
-   *
-   * @phpstan-return array<string, array>
    */
   public function jobMessage(): array {
     $jobId = $this->requestStack->getCurrentRequest()->get('job_id');
