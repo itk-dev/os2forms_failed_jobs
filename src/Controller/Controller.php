@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Controller for handling failed jobs.
  */
-class Controller extends ControllerBase {
+final class Controller extends ControllerBase {
 
   /**
    * Failed jobs helper.
@@ -80,6 +80,24 @@ class Controller extends ControllerBase {
     $view->execute();
 
     return $view->render() ?? ['#markup' => $this->t('No failed jobs')];
+  }
+
+  /**
+   * Get the message related to an advanced queue job.
+   *
+   * @return array<string, mixed>
+   *   The rendered message.
+   */
+  public function jobMessage(): array {
+    $jobId = $this->requestStack->getCurrentRequest()->get('job_id');
+    $job = $this->helper->getJobFromId($jobId);
+
+    $renderArray['content'] = [
+      '#type' => 'markup',
+      '#markup' => '<p>' . $job->getMessage() . '</p>',
+    ];
+
+    return $renderArray;
   }
 
   /**

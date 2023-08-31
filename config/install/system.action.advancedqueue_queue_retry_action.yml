@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - os2forms_failed_jobs
+  enforced:
+    module:
+      - os2forms_failed_jobs
+id: advancedqueue_queue_retry_action
+label: 'Retry processing'
+type: advancedqueue_queue
+plugin: advancedqueue_queue_retry_action
+configuration: {  }

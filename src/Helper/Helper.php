@@ -3,36 +3,17 @@
 namespace Drupal\os2forms_failed_jobs\Helper;
 
 use Drupal\advancedqueue\Job;
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\webform\WebformSubmissionInterface;
 
 /**
  * Helper for managing failed jobs.
  */
 class Helper {
-
-  /**
-   * The entity type manager service.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManager
-   */
-  protected EntityTypeManager $entityTypeManager;
-
-  /**
-   * Database connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected Connection $connection;
-
-  /**
-   * Messenger service.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
-   */
-  protected LoggerChannelFactory $loggerFactory;
 
   /**
    * The helper service constructor.
@@ -41,28 +22,28 @@ class Helper {
    *   The entity manager.
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    *   The logger factory.
    */
-  public function __construct(EntityTypeManager $entityTypeManager, Connection $connection, LoggerChannelFactory $logger_factory) {
-    $this->entityTypeManager = $entityTypeManager;
-    $this->connection = $connection;
-    $this->loggerFactory = $logger_factory;
-  }
+  public function __construct(
+    protected EntityTypeManager $entityTypeManager,
+    protected Connection $connection,
+    public LoggerChannelFactory $loggerFactory,
+  ) {}
 
   /**
    * Get job from job id.
    *
-   * @param int $jobId
+   * @param string $jobId
    *   The job id.
    *
    * @return \Drupal\advancedqueue\Job
    *   A list of attributes related to a job.
    */
-  public function getJobFromId(int $jobId): Job {
+  public function getJobFromId(string $jobId): Job {
     $query = $this->connection->select('advancedqueue', 'a');
     $query->fields('a');
-    $query->condition('job_id', (string) $jobId, '=');
+    $query->condition('job_id', $jobId, '=');
     $definition = $query->execute()->fetchAssoc();
 
     // Match Job constructor id.
@@ -77,13 +58,13 @@ class Helper {
   /**
    * Get submission id from job.
    *
-   * @param int $jobId
+   * @param string $jobId
    *   The job id.
    *
    * @return int|null
    *   The id of a form submission from a job.
    */
-  public function getSubmissionIdFromJob(int $jobId): ?int {
+  public function getSubmissionIdFromJob(string $jobId): ?int {
     $job = $this->getJobFromId($jobId);
     $payload = $job->getPayload();
 
@@ -157,15 +138,86 @@ class Helper {
    * @param string $jobId
    *   The id of a queue job.
    *
-   * @return string
+   * @return string|null
    *   The webform id.
    */
-  public function getWebformIdFromQueue(string $jobId): string {
+  public function getWebformIdFromQueue(string $jobId): ?string {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
     $query->condition('job_id', $jobId, '=');
     $query->fields('o', ['webform_id']);
 
     return $query->execute()?->fetchObject()?->webform_id;
+  }
+
+  /**
+   * Get webform serial id from job queue id.
+   *
+   * @param string $jobId
+   *   The id of a queue job.
+   *
+   * @return int
+   *   The serial id.
+   */
+  public function getSubmissionSerialIdFromJob(string $jobId): int {
+    try {
+      $submissionId = $this->getSubmissionIdFromJob($jobId);
+      $submission = $this->getWebformSubmission($submissionId);
+
+      if (!empty($submission)) {
+        /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+        return $submission->serial();
+      }
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
+        ->error($e->getMessage());
+    }
+
+    return 0;
+  }
+
+  /**
+   * Given a submission id get all matching jobs from advanced queue table.
+   *
+   * @param string $submissionId
+   *   The submission id.
+   *
+   * @return array
+   *   A list of matching jobs.
+   *
+   * @phpstan-return array<int, mixed>
+   */
+  public function getQueueJobIdsFromSubmissionId(string $submissionId): array {
+    $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
+    $query->fields('o', ['job_id']);
+    $query->condition('submission_id', $submissionId, '=');
+
+    return $query->execute()->fetchCol();
+  }
+
+  /**
+   * Given a submission serial id and webform id get all matching queues.
+   *
+   * @param string $serial
+   *   A submission serial id.
+   * @param string $webformId
+   *   A webform id.
+   *
+   * @return array
+   *   A list of matching jobs.
+   *
+   * @phpstan-return array<int, mixed>
+   */
+  public function getQueueJobIdsFromSerial(string $serial, string $webformId): array {
+    $query = $this->connection->select('webform_submission', 'w');
+    $query->fields('w', ['sid']);
+    $query->condition('serial', $serial, '=');
+    $query->condition('webform_id', $webformId, '=');
+
+    $submissionId = $query->execute()->fetchField();
+
+    return $this->getQueueJobIdsFromSubmissionId($submissionId);
+
   }
 
   /**
@@ -179,7 +231,7 @@ class Helper {
    *
    * @phpstan-return array<string, mixed>
    */
-  private function getDataFromJob(Job $job): ?array {
+  public function getDataFromJob(Job $job): ?array {
     $payload = $job->getPayload();
     $submissionId = $this->getSubmissionId($payload);
     if (empty($submissionId)) {
@@ -187,11 +239,17 @@ class Helper {
     }
 
     try {
+      /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+      $submission = $this->getWebformSubmission($submissionId);
+
+      // @phpstan-ignore-next-line
+      if (is_null($submission)) {
+        return [];
+      }
+
       return [
         'submission_id' => $submissionId,
-        'webform_id' => $this->getWebformSubmission($submissionId)
-        ?->getWebform()
-        ?->id(),
+        'webform_id' => $submission->getWebform()->id(),
       ];
     }
     catch (\Exception $e) {
@@ -248,13 +306,13 @@ class Helper {
    * @param int $submissionId
    *   Id of a submission.
    *
-   * @return \Drupal\webform\WebformSubmissionInterface|null
+   * @return \Drupal\Core\Entity\EntityInterface|null
    *   A webform id.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private function getWebformSubmission(int $submissionId): ?WebformSubmissionInterface {
+  private function getWebformSubmission(int $submissionId): ?EntityInterface {
     return $this->entityTypeManager->getStorage('webform_submission')->load($submissionId);
   }
 
