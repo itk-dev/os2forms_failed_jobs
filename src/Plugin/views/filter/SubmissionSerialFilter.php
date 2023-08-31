@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ViewsFilter("advancedqueue_job_submission_serial")
  */
 final class SubmissionSerialFilter extends StringFilter {
+
   /**
    * Class constructor.
    *
