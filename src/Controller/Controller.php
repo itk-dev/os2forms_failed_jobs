@@ -92,12 +92,12 @@ final class Controller extends ControllerBase {
     $jobId = $this->requestStack->getCurrentRequest()->get('job_id');
     $job = $this->helper->getJobFromId($jobId);
 
-    $render_array['content'] = [
+    $renderArray['content'] = [
       '#type' => 'markup',
       '#markup' => '<p>' . $job->getMessage() . '</p>',
     ];
 
-    return $render_array;
+    return $renderArray;
   }
 
   /**

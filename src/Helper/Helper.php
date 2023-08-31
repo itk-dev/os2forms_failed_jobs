@@ -16,41 +16,20 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 class Helper {
 
   /**
-   * The entity type manager service.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManager
-   */
-  protected EntityTypeManager $entityTypeManager;
-
-  /**
-   * Database connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected Connection $connection;
-
-  /**
-   * Messenger service.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
-   */
-  protected LoggerChannelFactory $loggerFactory;
-
-  /**
    * The helper service constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManager $entityTypeManager
    *   The entity manager.
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    *   The logger factory.
    */
-  public function __construct(EntityTypeManager $entityTypeManager, Connection $connection, LoggerChannelFactory $logger_factory) {
-    $this->entityTypeManager = $entityTypeManager;
-    $this->connection = $connection;
-    $this->loggerFactory = $logger_factory;
-  }
+  public function __construct(
+    protected EntityTypeManager $entityTypeManager,
+    protected Connection $connection,
+    public LoggerChannelFactory $loggerFactory,
+  ) {}
 
   /**
    * Get job from job id.
@@ -64,7 +43,7 @@ class Helper {
   public function getJobFromId(string $jobId): Job {
     $query = $this->connection->select('advancedqueue', 'a');
     $query->fields('a');
-    $query->condition('job_id', (string) $jobId, '=');
+    $query->condition('job_id', $jobId, '=');
     $definition = $query->execute()->fetchAssoc();
 
     // Match Job constructor id.
@@ -262,6 +241,11 @@ class Helper {
     try {
       /** @var \Drupal\webform\WebformSubmissionInterface $submission */
       $submission = $this->getWebformSubmission($submissionId);
+
+      // @phpstan-ignore-next-line
+      if (is_null($submission)) {
+        return [];
+      }
 
       return [
         'submission_id' => $submissionId,

@@ -16,31 +16,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ViewsFilter("advancedqueue_job_submission_serial")
  */
 final class SubmissionSerialFilter extends StringFilter {
-
-  /**
-   * The helper service.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
-   * The current route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected RouteMatchInterface $routeMatch;
-
   /**
    * Class constructor.
    *
    * @phpstan-param array<string, mixed> $configuration
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $connection, Helper $helper, RouteMatchInterface $route_match) {
+  public function __construct(
+    $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Connection $connection,
+    protected Helper $helper,
+    protected RouteMatchInterface $routeMatch
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $connection);
-
-    $this->helper = $helper;
-    $this->routeMatch = $route_match;
   }
 
   /**

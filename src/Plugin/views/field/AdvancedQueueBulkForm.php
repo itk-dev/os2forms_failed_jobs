@@ -21,13 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AdvancedQueueBulkForm extends BulkForm {
 
   /**
-   * Failed jobs helper.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
    * {@inheritdoc}
    *
    * @phpstan-param array<string, mixed> $configuration
@@ -40,7 +33,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
     LanguageManagerInterface $language_manager,
     MessengerInterface $messenger,
     EntityRepositoryInterface $entity_repository,
-    Helper $helper
+    protected Helper $helper
   ) {
     parent::__construct(
       $configuration,
@@ -51,8 +44,6 @@ final class AdvancedQueueBulkForm extends BulkForm {
       $messenger,
       $entity_repository
     );
-
-    $this->helper = $helper;
   }
 
   /**

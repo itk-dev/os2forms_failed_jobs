@@ -22,21 +22,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class WebformSubmissionId extends FieldPluginBase {
 
   /**
-   * The helper service.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
    * Class constructor.
    *
    * @phpstan-param array<string, mixed> $configuration
    */
-  final public function __construct($configuration, $plugin_id, $plugin_definition, Helper $helper) {
+  final public function __construct(
+    $configuration,
+    $plugin_id,
+    $plugin_definition,
+    protected Helper $helper
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->helper = $helper;
   }
 
   /**
