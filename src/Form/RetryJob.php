@@ -2,30 +2,21 @@
 
 namespace Drupal\os2forms_failed_jobs\Form;
 
-use Drupal\advancedqueue\Entity\QueueInterface;
 use Drupal\advancedqueue\Job;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a confirmation form for retrying a job.
  */
-class RetryJob extends ConfirmFormBase {
-
-  /**
-   * The queue.
-   *
-   * @var \Drupal\advancedqueue\Entity\QueueInterface
-   */
-  protected QueueInterface $queue;
-
+final class RetryJob extends ConfirmFormBase {
   /**
    * The job ID to release.
    *
@@ -34,33 +25,13 @@ class RetryJob extends ConfirmFormBase {
   protected int $jobId;
 
   /**
-   * The database connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected Connection $database;
-
-  /**
-   * The entity type manager service.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManager
-   */
-  protected EntityTypeManager $entityTypeManager;
-
-  /**
-   * Failed jobs helper.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $failedJobsHelper;
-
-  /**
    * Retry job constructor.
    */
-  public function __construct(Connection $database, EntityTypeManager $entityTypeManager, Helper $failedJobsHelper) {
-    $this->database = $database;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->failedJobsHelper = $failedJobsHelper;
+  public function __construct(
+    protected Connection $database,
+    protected EntityTypeManager $entityTypeManager,
+    protected Helper $helper,
+  ) {
   }
 
   /**
@@ -85,9 +56,12 @@ class RetryJob extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion(): TranslatableMarkup {
-    return $this->t('Are you sure you want to retry job @job_id from the @queue queue?', [
-      '@job_id' => $this->jobId,
-      '@queue' => $this->queue->label(),
+    $job = $this->helper->getJobFromId((string) $this->jobId);
+    $webformId = $this->helper->getWebformIdFromQueue($job->getId());
+
+    return $this->t('Are you sure you want to retry queue job related to Webform: @webformId, Submission id: @serialId', [
+      '@serialId' => $this->helper->getSubmissionSerialIdFromJob($job->getId()),
+      '@webformId' => $this->entityTypeManager->getStorage('webform')->load($webformId)->label(),
     ]);
   }
 
@@ -95,12 +69,9 @@ class RetryJob extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl(): Url {
-    $submissionId = $this->failedJobsHelper->getSubmissionIdFromJob($this->jobId);
-    /** @var \Drupal\webform\WebformSubmissionInterface $submission */
-    $submission = $this->entityTypeManager->getStorage('webform_submission')->load($submissionId);
-    $webform = $submission->getWebform();
+    $webform = $this->helper->getWebformIdFromQueue((string) $this->jobId);
 
-    return Url::fromRoute('entity.webform.error_log', ['webform' => $webform->id()]);
+    return Url::fromRoute('entity.webform.error_log', ['webform' => $webform]);
   }
 
   /**
@@ -109,8 +80,7 @@ class RetryJob extends ConfirmFormBase {
    * @phpstan-param array<string, mixed> $form
    * @phpstan-return array<string, mixed>
    */
-  public function buildForm(array $form, FormStateInterface $form_state, QueueInterface $advancedqueue_queue = NULL, int $job_id = NULL): array {
-    $this->queue = $advancedqueue_queue;
+  public function buildForm(array $form, FormStateInterface $form_state, int $job_id = NULL): array {
     $this->jobId = $job_id;
 
     return parent::buildForm($form, $form_state);
@@ -122,10 +92,17 @@ class RetryJob extends ConfirmFormBase {
    * @phpstan-param array<string, mixed> $form
    * @phpstan-return void
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $queue_backend = $this->queue->getBackend();
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $job = $this->helper->getJobFromId((string) $this->jobId);
+    $queue_id = $job->getQueueId();
+
+    $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
+    /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+    $queue = $queue_storage->load($queue_id);
+
+    $queue_backend = $queue->getBackend();
     if ($queue_backend instanceof Database) {
-      $job = $this->failedJobsHelper->getJobFromId($this->jobId);
+      $job = $this->helper->getJobFromId((string) $this->jobId);
 
       if ($job->getState() != Job::STATE_FAILURE) {
         throw new \InvalidArgumentException('Only failed jobs can be retried.');

@@ -2,26 +2,26 @@
 
 namespace Drupal\os2forms_failed_jobs\Controller;
 
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\views\Views;
-use Drupal\Core\Entity\EntityTypeManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\Core\Render\RendererInterface;
 
 /**
  * Controller for handling failed jobs.
  */
-class Controller extends ControllerBase {
+final class Controller extends ControllerBase {
 
   /**
    * Failed jobs helper.
    *
    * @var \Drupal\os2forms_failed_jobs\Helper\Helper
    */
-  protected Helper $failedJobsHelper;
+  protected Helper $helper;
 
   /**
    * Request stack.
@@ -40,9 +40,9 @@ class Controller extends ControllerBase {
   /**
    * Failed jobs constructor.
    */
-  public function __construct(EntityTypeManager $entityTypeManager, Helper $failedJobsHelper, RequestStack $requestStack, RendererInterface $renderer) {
+  public function __construct(EntityTypeManager $entityTypeManager, Helper $helper, RequestStack $requestStack, RendererInterface $renderer) {
     $this->entityTypeManager = $entityTypeManager;
-    $this->failedJobsHelper = $failedJobsHelper;
+    $this->helper = $helper;
     $this->requestStack = $requestStack;
     $this->renderer = $renderer;
   }
@@ -76,10 +76,28 @@ class Controller extends ControllerBase {
     $view->setDisplay('block_1');
     // Add custom argument that the views_ui cannot provide.
     $formId = $this->requestStack->getCurrentRequest()->get('webform')->id();
-    $view->setArguments([implode(',', $this->getQueueJobIds($formId))]);
+    $view->setArguments([implode(',', $this->helper->getQueueJobIds($formId))]);
     $view->execute();
 
     return $view->render() ?? ['#markup' => $this->t('No failed jobs')];
+  }
+
+  /**
+   * Get the message related to an advanced queue job.
+   *
+   * @return array<string, mixed>
+   *   The rendered message.
+   */
+  public function jobMessage(): array {
+    $jobId = $this->requestStack->getCurrentRequest()->get('job_id');
+    $job = $this->helper->getJobFromId($jobId);
+
+    $renderArray['content'] = [
+      '#type' => 'markup',
+      '#markup' => '<p>' . $job->getMessage() . '</p>',
+    ];
+
+    return $renderArray;
   }
 
   /**
@@ -90,61 +108,6 @@ class Controller extends ControllerBase {
    */
   public function title(): TranslatableMarkup {
     return $this->t('Failed jobs');
-  }
-
-  /**
-   * Get all jobs that match a specific form.
-   *
-   * @todo Find a better way to get all jobids related to form, this is quite a load.
-   *
-   * @param string $formId
-   *   The form to match.
-   *
-   * @return array
-   *   A list of view parameters.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   *
-   * @phpstan-return array<string, mixed>
-   */
-  private function getQueueJobIds(string $formId): array {
-    $submissionIdsFromForm = $this->getSubmissionsFromForm($formId);
-    $formJobs = [];
-    $results = $this->failedJobsHelper->getAllJobs();
-
-    foreach ($results as $result) {
-      $submissionId = $this->failedJobsHelper->getSubmissionIdFromJob($result->job_id);
-
-      if (in_array($submissionId, $submissionIdsFromForm)) {
-        $formJobs[$result->job_id] = $result->job_id;
-      }
-    }
-
-    return $formJobs;
-  }
-
-  /**
-   * Get Submissions from form id.
-   *
-   * @param string $formId
-   *   The form id.
-   *
-   * @return array
-   *   List of submissions.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   *
-   * @phpstan-return array<int, string>
-   */
-  private function getSubmissionsFromForm(string $formId): array {
-    return $this->entityTypeManager
-      ->getStorage('webform_submission')
-      ->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('webform_id', $formId)
-      ->execute();
   }
 
 }

@@ -11,11 +11,48 @@
  * @phpstan-return array<string, mixed>
  */
 function os2forms_failed_jobs_views_data(): array {
+  $data['advancedqueue']['advancedqueue_bulk_form'] = [
+    'title' => 'Advanced queue operations bulk form',
+    'help' => 'Add a form element that lets you run operations on multiple entries.',
+    'field' => [
+      'id' => 'advancedqueue_bulk_form',
+    ],
+  ];
+
   $data['advancedqueue']['retry_operation'] = [
     'title' => t('Retry operation'),
     'help' => t('Provides available operations'),
     'field' => [
       'id' => 'advancedqueue_job_retry_operation',
+    ],
+  ];
+
+  $data['advancedqueue']['webform_id'] = [
+    'title' => t('Webform id'),
+    'help' => t('Provides a related webform id if one exists in the advanced queue payload'),
+    'field' => [
+      'id' => 'advancedqueue_job_webform_id',
+    ],
+  ];
+
+  $data['advancedqueue']['webform_submission_id'] = [
+    'title' => t('Webform submission id'),
+    'help' => t('Provides a related webform submission id if one exists in the advanced queue payload'),
+    'field' => [
+      'id' => 'advancedqueue_job_webform_submission_id',
+    ],
+  ];
+
+  $data['advancedqueue']['webform_submission_serial_id'] = [
+    'title' => t('Webform submission serial id'),
+    'help' => t('Provides a related webform submission serial id if a webform submission id exists in the advanced queue payload'),
+    'field' => [
+      'id' => 'advancedqueue_job_webform_submission_serial_id',
+    ],
+    'filter' => [
+      'title' => t('Submission serial id'),
+      'field' => 'id',
+      'id' => 'advancedqueue_job_submission_serial',
     ],
   ];
 

@@ -1,4 +1,12 @@
 services:
   Drupal\os2forms_failed_jobs\Helper\Helper:
-    arguments:
-      - '@database'
+    arguments: [
+      '@entity_type.manager',
+      '@database',
+      '@logger.factory'
+    ]
+
+  Drupal\os2forms_failed_jobs\EventSubscriber\AdvancedQueueProcessSubscriber:
+    arguments: [ '@Drupal\os2forms_failed_jobs\Helper\Helper' ]
+    tags:
+      - { name: event_subscriber }
