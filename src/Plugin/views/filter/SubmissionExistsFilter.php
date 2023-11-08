@@ -9,13 +9,13 @@ use Drupal\views\Plugin\views\filter\StringFilter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Filter by submission serial.
+ * Filter by submission exists.
  *
  * @ingroup views_filter_handlers
  *
- * @ViewsFilter("advancedqueue_job_submission_serial")
+ * @ViewsFilter("advancedqueue_job_submission_exists")
  */
-final class SubmissionSerialFilter extends StringFilter {
+final class SubmissionExistsFilter extends StringFilter {
 
   /**
    * Class constructor.
@@ -59,11 +59,16 @@ final class SubmissionSerialFilter extends StringFilter {
     $query = $this->query;
     $table = array_key_first($query->tables);
 
-    $input = $this->value;
     $webform = $this->routeMatch->getParameter('webform');
 
     if ($webform) {
-      $jobs = $this->helper->getQueueJobIdsFromSerial($input, $webform->get('id'));
+      $jobs = [];
+      $jobIds = $this->helper->getQueueJobIds($webform->get('id'));
+      foreach ($jobIds as $job) {
+        if ($this->helper->getSubmissionSerialIdFromJob($job) > 0) {
+          $jobs[] = $job;
+        }
+      }
       if (empty($jobs)) {
         // The 'IN' operator requires a non empty array.
         $jobs = [0];
