@@ -258,6 +258,49 @@ class Helper {
   }
 
   /**
+   * Get a list of queue submission relations.
+   *
+   * @param string|NULL $submissionId
+   *   A specific webform submission id.
+   *
+   * @return array
+   *   A list of queue submission relations.
+   */
+  public function getQueueSubmissionRelations(string $submissionId = NULL): array {
+    $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
+    $query->fields('o', ['job_id', 'submission_id']);
+    if ($submissionId) {
+      $query->condition('submission_id', $submissionId, '=');
+    }
+
+    return $query->execute()->fetchAll();
+  }
+
+  /**
+   * Remove all relations that don't have a matching submission id.
+   *
+   * @param array $entries
+   *   List of entries with job_id and submission_id.
+   */
+  public function removeDetachedRelations(array $entries): void {
+    foreach ($entries as $entry) {
+      try {
+        $submission = $this->entityTypeManager->getStorage('webform_submission')
+          ->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('sid', $entry->submission_id)
+          ->execute();
+        if (empty($submission)) {
+          $this->removeQueueSubmissionRelation($entry->job_id);
+        }
+      }
+      catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      }
+
+    }
+  }
+
+  /**
    * Get all entries from the advancedqueue table.
    *
    * @return array
@@ -329,6 +372,21 @@ class Helper {
     $query->fields('o');
 
     return $query->execute()->fetchAllAssoc('job_id');
+  }
+
+  /**
+   * Delete job from advanced queue table.
+   *
+   * @param string $jobId
+   *   The advanced queue job id.
+   */
+  private function removeQueueSubmissionRelation(string $jobId): void {
+    // Delete os2forms_failed_jobs_queue_submission_relation.
+    if ($this->connection->schema()->tableExists('os2forms_failed_jobs_queue_submission_relation')) {
+      $this->connection->delete('os2forms_failed_jobs_queue_submission_relation')
+        ->condition('job_id', $jobId)
+        ->execute();
+    }
   }
 
 }

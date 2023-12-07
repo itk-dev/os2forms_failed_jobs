@@ -36,4 +36,14 @@ class Os2formsFailedJobsCommands extends DrushCommands {
     $this->helper->handleImport();
   }
 
+  /**
+   * Remove entries from os2forms_failed_jobs_queue_submission_relation.
+   *
+   * @command os2forms_failed_jobs:remove-detached-relations
+   */
+  public function removeDetachedRelations(): void {
+    $relations = $this->helper->getQueueSubmissionRelations();
+    $this->helper->removeDetachedRelations($relations);
+  }
+
 }
