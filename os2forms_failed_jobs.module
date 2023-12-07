@@ -78,6 +78,6 @@ function os2forms_failed_jobs_views_data(): array {
  * Implements hook_ENTITY_TYPE_delete()
  */
 function os2forms_failed_jobs_webform_submission_delete(EntityInterface $entity): void {
-  $relations = Drupal::service(Helper::class)->getQueueSubmissionRelations($entity->id());
-  Drupal::service(Helper::class)->removeDetachedRelations($relations);
+  $relations = Drupal::service(Helper::class)->getDetachedQueueSubmissionRelations($entity->id());
+  Drupal::service(Helper::class)->removeRelations($relations);
 }

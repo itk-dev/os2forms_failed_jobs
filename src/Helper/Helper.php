@@ -258,15 +258,15 @@ class Helper {
   }
 
   /**
-   * Get a list of queue submission relations.
+   * Get a list of queue submission relations without existing submission.
    *
-   * @param string|NULL $submissionId
+   * @param string|null $submissionId
    *   A specific webform submission id.
    *
    * @return array
    *   A list of queue submission relations.
    */
-  public function getQueueSubmissionRelations(string $submissionId = NULL): array {
+  public function getDetachedQueueSubmissionRelations(string $submissionId = NULL): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
     $query->fields('o', ['job_id', 'submission_id']);
     if ($submissionId) {
@@ -277,12 +277,12 @@ class Helper {
   }
 
   /**
-   * Remove all relations that don't have a matching submission id.
+   * Remove a list relations.
    *
    * @param array $entries
    *   List of entries with job_id and submission_id.
    */
-  public function removeDetachedRelations(array $entries): void {
+  public function removeRelations(array $entries): void {
     foreach ($entries as $entry) {
       try {
         $submission = $this->entityTypeManager->getStorage('webform_submission')
