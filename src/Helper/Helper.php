@@ -265,6 +265,8 @@ class Helper {
    *
    * @return array
    *   A list of queue submission relations.
+   *
+   * @phpstan-return array<int, mixed>
    */
   public function getDetachedQueueSubmissionRelations(string $submissionId = NULL): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
@@ -281,6 +283,8 @@ class Helper {
    *
    * @param array $entries
    *   List of entries with job_id and submission_id.
+   *
+   * @phpstan-param array<string, mixed> $entries
    */
   public function removeRelations(array $entries): void {
     foreach ($entries as $entry) {
