@@ -266,7 +266,7 @@ class Helper {
    * @return array
    *   A list of queue submission relations.
    *
-   * @phpstan-return array<int, mixed>
+   * @phpstan-return array<string, mixed>
    */
   public function getDetachedQueueSubmissionRelations(string $submissionId = NULL): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
