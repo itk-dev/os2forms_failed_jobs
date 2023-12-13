@@ -5,8 +5,8 @@
  * Hooks related to os2forms failed jobs module.
  */
 
-use Drupal\webform\WebformSubmissionInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
+use Drupal\webform\WebformSubmissionInterface;
 
 /**
  * Implements hook_views_data().
