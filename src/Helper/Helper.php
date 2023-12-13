@@ -9,6 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\webform\WebformSubmissionInterface;
 
 /**
  * Helper for managing failed jobs.
@@ -295,13 +296,24 @@ class Helper {
           ->condition('sid', $entry->submission_id)
           ->execute();
         if (empty($submission)) {
-          $this->removeQueueSubmissionRelation($entry->job_id);
+          $this->removeQueueSubmissionRelation($entry->submission_id);
         }
       }
       catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
       }
 
     }
+  }
+
+  /**
+   * Cleanup relations.
+   *
+   * @param \Drupal\webform\WebformSubmissionInterface|null $submission
+   *   A webform submission.
+   */
+  public function cleanUp(WebformSubmissionInterface $submission = NULL): void {
+    $relations = $this->getDetachedQueueSubmissionRelations($submission->id());
+    $this->removeRelations($relations);
   }
 
   /**
@@ -379,16 +391,16 @@ class Helper {
   }
 
   /**
-   * Delete job from advanced queue table.
+   * Delete advanced queue submission relation.
    *
-   * @param string $jobId
-   *   The advanced queue job id.
+   * @param string $submissionId
+   *   The advanced queue submission id.
    */
-  private function removeQueueSubmissionRelation(string $jobId): void {
+  private function removeQueueSubmissionRelation(string $submissionId): void {
     // Delete os2forms_failed_jobs_queue_submission_relation.
     if ($this->connection->schema()->tableExists('os2forms_failed_jobs_queue_submission_relation')) {
       $this->connection->delete('os2forms_failed_jobs_queue_submission_relation')
-        ->condition('job_id', $jobId)
+        ->condition('submission_id', $submissionId)
         ->execute();
     }
   }
