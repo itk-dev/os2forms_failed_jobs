@@ -312,7 +312,7 @@ class Helper {
    *   A webform submission.
    */
   public function cleanUp(WebformSubmissionInterface $submission = NULL): void {
-    $relations = $this->getDetachedQueueSubmissionRelations($submission->id());
+    $relations = $this->getDetachedQueueSubmissionRelations($submission?->id());
     $this->removeRelations($relations);
   }
 
