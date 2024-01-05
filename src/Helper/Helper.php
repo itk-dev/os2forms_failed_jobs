@@ -38,15 +38,18 @@ class Helper {
    * @param string $jobId
    *   The job id.
    *
-   * @return \Drupal\advancedqueue\Job
+   * @return \Drupal\advancedqueue\Job|null
    *   A list of attributes related to a job.
    */
-  public function getJobFromId(string $jobId): Job {
+  public function getJobFromId(string $jobId): Job|NULL {
     $query = $this->connection->select('advancedqueue', 'a');
     $query->fields('a');
     $query->condition('job_id', $jobId, '=');
     $definition = $query->execute()->fetchAssoc();
 
+    if (empty($definition)) {
+      return NULL;
+    }
     // Match Job constructor id.
     $definition['id'] = $definition['job_id'];
 
@@ -67,6 +70,9 @@ class Helper {
    */
   public function getSubmissionIdFromJob(string $jobId): ?int {
     $job = $this->getJobFromId($jobId);
+    if (empty($job)) {
+      return NULL;
+    }
     $payload = $job->getPayload();
 
     return $payload['submissionId'] ?? $payload['submission']['id'] ?? NULL;

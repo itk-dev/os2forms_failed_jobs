@@ -169,6 +169,9 @@ final class AdvancedQueueBulkForm extends BulkForm {
       foreach ($selected as $bulk_form_key) {
         // Skip execution if the user did not have access.
         $job = $this->helper->getJobFromId($bulk_form_key);
+        if (empty($job)) {
+          return;
+        }
         if ('failure' !== $job->getState()) {
           $this->messenger->addError($this->t('Element with webform submission id: @webform_submit_id already has state: @state', [
             '@webform_submit_id' => $this->helper->getSubmissionSerialIdFromJob($bulk_form_key),
