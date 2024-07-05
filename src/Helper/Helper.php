@@ -9,6 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\webform\WebformSubmissionInterface;
 
 /**
  * Helper for managing failed jobs.
@@ -37,15 +38,18 @@ class Helper {
    * @param string $jobId
    *   The job id.
    *
-   * @return \Drupal\advancedqueue\Job
+   * @return \Drupal\advancedqueue\Job|null
    *   A list of attributes related to a job.
    */
-  public function getJobFromId(string $jobId): Job {
+  public function getJobFromId(string $jobId): Job|NULL {
     $query = $this->connection->select('advancedqueue', 'a');
     $query->fields('a');
     $query->condition('job_id', $jobId, '=');
     $definition = $query->execute()->fetchAssoc();
 
+    if (empty($definition)) {
+      return NULL;
+    }
     // Match Job constructor id.
     $definition['id'] = $definition['job_id'];
 
@@ -66,6 +70,9 @@ class Helper {
    */
   public function getSubmissionIdFromJob(string $jobId): ?int {
     $job = $this->getJobFromId($jobId);
+    if (empty($job)) {
+      return NULL;
+    }
     $payload = $job->getPayload();
 
     return $payload['submissionId'] ?? $payload['submission']['id'] ?? NULL;
@@ -258,6 +265,64 @@ class Helper {
   }
 
   /**
+   * Get a list of queue submission relations without existing submission.
+   *
+   * @param string|null $submissionId
+   *   A specific webform submission id.
+   *
+   * @return array
+   *   A list of queue submission relations.
+   *
+   * @phpstan-return array<string, mixed>
+   */
+  public function getDetachedQueueSubmissionRelations(string $submissionId = NULL): array {
+    $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
+    $query->fields('o', ['job_id', 'submission_id']);
+    if ($submissionId) {
+      $query->condition('submission_id', $submissionId, '=');
+    }
+
+    return $query->execute()->fetchAll();
+  }
+
+  /**
+   * Remove a list relations.
+   *
+   * @param array $entries
+   *   List of entries with job_id and submission_id.
+   *
+   * @phpstan-param array<string, mixed> $entries
+   */
+  public function removeRelations(array $entries): void {
+    foreach ($entries as $entry) {
+      try {
+        $submission = $this->entityTypeManager->getStorage('webform_submission')
+          ->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('sid', $entry->submission_id)
+          ->execute();
+        if (empty($submission)) {
+          $this->removeQueueSubmissionRelation($entry->submission_id);
+        }
+      }
+      catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      }
+
+    }
+  }
+
+  /**
+   * Cleanup relations.
+   *
+   * @param \Drupal\webform\WebformSubmissionInterface|null $submission
+   *   A webform submission.
+   */
+  public function cleanUp(WebformSubmissionInterface $submission = NULL): void {
+    $relations = $this->getDetachedQueueSubmissionRelations($submission?->id());
+    $this->removeRelations($relations);
+  }
+
+  /**
    * Get all entries from the advancedqueue table.
    *
    * @return array
@@ -329,6 +394,21 @@ class Helper {
     $query->fields('o');
 
     return $query->execute()->fetchAllAssoc('job_id');
+  }
+
+  /**
+   * Delete advanced queue submission relation.
+   *
+   * @param string $submissionId
+   *   The advanced queue submission id.
+   */
+  private function removeQueueSubmissionRelation(string $submissionId): void {
+    // Delete os2forms_failed_jobs_queue_submission_relation.
+    if ($this->connection->schema()->tableExists('os2forms_failed_jobs_queue_submission_relation')) {
+      $this->connection->delete('os2forms_failed_jobs_queue_submission_relation')
+        ->condition('submission_id', $submissionId)
+        ->execute();
+    }
   }
 
 }

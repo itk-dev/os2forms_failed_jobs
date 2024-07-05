@@ -92,9 +92,16 @@ final class Controller extends ControllerBase {
     $jobId = $this->requestStack->getCurrentRequest()->get('job_id');
     $job = $this->helper->getJobFromId($jobId);
 
+    if (empty($job)) {
+      $message = $this->t('Job not found');
+    }
+    else {
+      $message = $job->getMessage();
+    }
+
     $renderArray['content'] = [
       '#type' => 'markup',
-      '#markup' => '<p>' . $job->getMessage() . '</p>',
+      '#markup' => '<p>' . $message . '</p>',
     ];
 
     return $renderArray;

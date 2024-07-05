@@ -5,6 +5,9 @@
  * Hooks related to os2forms failed jobs module.
  */
 
+use Drupal\os2forms_failed_jobs\Helper\Helper;
+use Drupal\webform\WebformSubmissionInterface;
+
 /**
  * Implements hook_views_data().
  *
@@ -53,8 +56,27 @@ function os2forms_failed_jobs_views_data(): array {
       'title' => t('Submission serial id'),
       'field' => 'id',
       'id' => 'advancedqueue_job_submission_serial',
+      'allow empty' => TRUE,
+    ],
+  ];
+
+  $data['advancedqueue']['webform_submission_serial_exists'] = [
+    'title' => t('Webform submission serial exists filter'),
+    'help' => t('Provides a filter for checking if webform submission exists from job'),
+    'filter' => [
+      'title' => t('Submission serial exists'),
+      'field' => 'id',
+      'id' => 'advancedqueue_job_submission_exists',
+      'allow empty' => TRUE,
     ],
   ];
 
   return $data;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function os2forms_failed_jobs_webform_submission_delete(WebformSubmissionInterface $submission): void {
+  Drupal::service(Helper::class)->cleanUp($submission);
 }

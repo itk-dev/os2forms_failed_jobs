@@ -86,6 +86,9 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
    */
   public function execute(string $jobId = NULL): void {
     $job = $this->helper->getJobFromId($jobId);
+    if (empty($job)) {
+      return;
+    }
     $queue_id = $job->getQueueId();
 
     $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');

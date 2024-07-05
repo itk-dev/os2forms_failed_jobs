@@ -57,6 +57,11 @@ final class RetryJob extends ConfirmFormBase {
    */
   public function getQuestion(): TranslatableMarkup {
     $job = $this->helper->getJobFromId((string) $this->jobId);
+
+    if (empty($job)) {
+      return $this->t('Job not found');
+    }
+
     $webformId = $this->helper->getWebformIdFromQueue($job->getId());
 
     return $this->t('Are you sure you want to retry queue job related to Webform: @webformId, Submission id: @serialId', [
@@ -94,22 +99,22 @@ final class RetryJob extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $job = $this->helper->getJobFromId((string) $this->jobId);
-    $queue_id = $job->getQueueId();
+    if (!empty($job)) {
+      $queue_id = $job->getQueueId();
 
-    $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
-    /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
-    $queue = $queue_storage->load($queue_id);
+      $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
+      /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+      $queue = $queue_storage->load($queue_id);
 
-    $queue_backend = $queue->getBackend();
-    if ($queue_backend instanceof Database) {
-      $job = $this->helper->getJobFromId((string) $this->jobId);
+      $queue_backend = $queue->getBackend();
+      if ($queue_backend instanceof Database) {
+        if ($job->getState() != Job::STATE_FAILURE) {
+          throw new \InvalidArgumentException('Only failed jobs can be retried.');
+        }
 
-      if ($job->getState() != Job::STATE_FAILURE) {
-        throw new \InvalidArgumentException('Only failed jobs can be retried.');
+        $queue_backend->retryJob($job);
+        $form_state->setRedirectUrl($this->getCancelUrl());
       }
-
-      $queue_backend->retryJob($job);
-      $form_state->setRedirectUrl($this->getCancelUrl());
     }
   }
 
