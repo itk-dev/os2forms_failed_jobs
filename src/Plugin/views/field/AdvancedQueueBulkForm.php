@@ -33,7 +33,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
     LanguageManagerInterface $language_manager,
     MessengerInterface $messenger,
     EntityRepositoryInterface $entity_repository,
-    protected Helper $helper
+    protected Helper $helper,
   ) {
     parent::__construct(
       $configuration,

@@ -30,7 +30,7 @@ class WebformSubmissionId extends FieldPluginBase {
     $configuration,
     $plugin_id,
     $plugin_definition,
-    protected Helper $helper
+    protected Helper $helper,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

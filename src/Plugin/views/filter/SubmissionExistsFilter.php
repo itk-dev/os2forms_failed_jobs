@@ -28,7 +28,7 @@ final class SubmissionExistsFilter extends StringFilter {
     $plugin_definition,
     Connection $connection,
     protected Helper $helper,
-    protected RouteMatchInterface $routeMatch
+    protected RouteMatchInterface $routeMatch,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $connection);
   }
