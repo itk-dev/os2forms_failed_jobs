@@ -4,7 +4,7 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 
 ## [Under udvikling]
 
-## [1.5.0] 2024-06-05
+## [1.5.0] 2024-07-05
 
 * Drupal 10 kompatibilitet
 
