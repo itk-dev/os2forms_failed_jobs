@@ -2,7 +2,11 @@
 
 Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 
-## In develop
+## [Under udvikling]
+
+## [1.5.0] 2024-06-05
+
+* Drupal 10 kompatibilitet
 
 ## [1.4.0] 2024-01-05
 
@@ -10,3 +14,8 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 * Error loggen vise nogle gange AAA som state. [SUPP0RT-1381](https://jira.itkdev.dk/browse/SUPP0RT-1381)
 * Oprydning i relation køen efter slettede submisisons
 * Tilføjelse af CHANGELOG.md
+
+[Under udvikling]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.4.0...1.5.0
+[1.4.0]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.3.2...1.4.0
+
