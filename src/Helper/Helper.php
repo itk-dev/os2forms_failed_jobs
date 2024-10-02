@@ -2,13 +2,13 @@
 
 namespace Drupal\os2forms_failed_jobs\Helper;
 
-use Drupal\advancedqueue\Job;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\advancedqueue\Job;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -275,7 +275,7 @@ class Helper {
    *
    * @phpstan-return array<string, mixed>
    */
-  public function getDetachedQueueSubmissionRelations(string $submissionId = NULL): array {
+  public function getDetachedQueueSubmissionRelations(?string $submissionId = NULL): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
     $query->fields('o', ['job_id', 'submission_id']);
     if ($submissionId) {
@@ -317,7 +317,7 @@ class Helper {
    * @param \Drupal\webform\WebformSubmissionInterface|null $submission
    *   A webform submission.
    */
-  public function cleanUp(WebformSubmissionInterface $submission = NULL): void {
+  public function cleanUp(?WebformSubmissionInterface $submission = NULL): void {
     $relations = $this->getDetachedQueueSubmissionRelations($submission?->id());
     $this->removeRelations($relations);
   }

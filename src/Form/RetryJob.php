@@ -2,14 +2,14 @@
 
 namespace Drupal\os2forms_failed_jobs\Form;
 
-use Drupal\advancedqueue\Job;
-use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\advancedqueue\Job;
+use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -85,7 +85,7 @@ final class RetryJob extends ConfirmFormBase {
    * @phpstan-param array<string, mixed> $form
    * @phpstan-return array<string, mixed>
    */
-  public function buildForm(array $form, FormStateInterface $form_state, int $job_id = NULL): array {
+  public function buildForm(array $form, FormStateInterface $form_state, ?int $job_id = NULL): array {
     $this->jobId = $job_id;
 
     return parent::buildForm($form, $form_state);

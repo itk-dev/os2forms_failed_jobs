@@ -2,10 +2,10 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 
-use Drupal\advancedqueue\Job;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\advancedqueue\Job;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Render\ViewsRenderPipelineMarkup;
@@ -27,7 +27,7 @@ class RetryOperation extends FieldPluginBase {
    * @phpstan-param array<string, mixed> $options
    * @phpstan-return void
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL): void {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL): void {
     parent::init($view, $display, $options);
 
     $this->additional_fields['state'] = 'state';

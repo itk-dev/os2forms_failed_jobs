@@ -55,7 +55,7 @@ class WebformSubmissionId extends FieldPluginBase {
    * @phpstan-param array<string, mixed> $options
    * @phpstan-return void
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL): void {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL): void {
     parent::init($view, $display, $options);
 
     $this->additional_fields['webform_submission_id'] = [

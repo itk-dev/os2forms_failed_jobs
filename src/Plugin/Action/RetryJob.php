@@ -2,14 +2,14 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\Action;
 
-use Drupal\advancedqueue\Entity\QueueInterface;
-use Drupal\advancedqueue\Job;
-use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
-use Drupal\advancedqueue\ProcessorInterface;
 use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\advancedqueue\Entity\QueueInterface;
+use Drupal\advancedqueue\Job;
+use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
+use Drupal\advancedqueue\ProcessorInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -84,7 +84,7 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function execute(string $jobId = NULL): void {
+  public function execute(?string $jobId = NULL): void {
     $job = $this->helper->getJobFromId($jobId);
     if (empty($job)) {
       return;
@@ -108,7 +108,7 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     return TRUE;
   }
 
