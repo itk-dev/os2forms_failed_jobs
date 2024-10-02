@@ -106,3 +106,11 @@ function os2forms_failed_jobs_update_9001(): void {
 function os2forms_failed_jobs_update_9002(): void {
   Drupal::service(Helper::class)->handleImport();
 }
+
+/**
+ * Make job_id primary key in os2forms_failed_jobs_queue_submission_relation table.
+ */
+function os2forms_failed_jobs_update_9003(): void {
+  $schema = \Drupal::database()->schema();
+  $schema->addPrimaryKey('os2forms_failed_jobs_queue_submission_relation', ['job_id']);
+}
