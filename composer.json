@@ -26,11 +26,12 @@
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
         "drupal/coder": "^8.3",
-        "mglaman/drupal-check": "^1.4"
+        "mglaman/drupal-check": "^1.4",
+        "mglaman/phpstan-drupal": "~1.2"
     },
     "scripts": {
         "code-analysis/drupal-check": [
-            "vendor/bin/drupal-check --deprecations --analysis --exclude-dir=vendor *.* src"
+            "vendor/bin/drupal-check --deprecations --analysis --exclude-dir='vendor' *.* src"
         ],
         "code-analysis": [
             "@code-analysis/drupal-check"
