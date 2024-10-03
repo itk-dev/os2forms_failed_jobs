@@ -37,7 +37,7 @@ function os2forms_failed_jobs_schema(): array {
       ],
     ],
     'primary key' => [
-      'job_id'
+      'job_id',
     ],
     'indexes' => [
       'job_id' => [
