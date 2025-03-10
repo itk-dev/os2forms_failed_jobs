@@ -4,6 +4,8 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 
 ## [Under udvikling]
 
+* Tillod jobs uden relation til indsendelser at blive genkørt.
+
 ## [1.5.1] 2024-10-02
 
 * Tilføejde primary key til relationstabellen.

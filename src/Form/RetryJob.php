@@ -62,12 +62,18 @@ final class RetryJob extends ConfirmFormBase {
       return $this->t('Job not found');
     }
 
+
     $webformId = $this->helper->getWebformIdFromQueue($job->getId());
 
-    return $this->t('Are you sure you want to retry queue job related to Webform: @webformId, Submission id: @serialId', [
-      '@serialId' => $this->helper->getSubmissionSerialIdFromJob($job->getId()),
-      '@webformId' => $this->entityTypeManager->getStorage('webform')->load($webformId)->label(),
-    ]);
+    if (NULL !== $webformId) {
+      return $this->t('Are you sure you want to retry queue job related to Webform: @webformId, Submission id: @serialId', [
+        '@serialId' => $this->helper->getSubmissionSerialIdFromJob($job->getId()),
+        '@webformId' => $this->entityTypeManager->getStorage('webform')->load($webformId)->label(),
+      ]);
+    }
+    else {
+      return $this->t('Are you sure you want to retry queue job: @jobId', ['@jobId' => $job->getId()]);
+    }
   }
 
   /**
@@ -76,7 +82,15 @@ final class RetryJob extends ConfirmFormBase {
   public function getCancelUrl(): Url {
     $webform = $this->helper->getWebformIdFromQueue((string) $this->jobId);
 
-    return Url::fromRoute('entity.webform.error_log', ['webform' => $webform]);
+    if (NULL === $webform) {
+      $job = $this->helper->getJobFromId((string) $this->jobId);
+
+      return Url::fromRoute('view.advancedqueue_jobs.page_1', ['arg_0' => $job->getQueueId()]);
+    }
+    else {
+      return Url::fromRoute('entity.webform.error_log', ['webform' => $webform]);
+    }
+
   }
 
   /**
