@@ -62,7 +62,6 @@ final class RetryJob extends ConfirmFormBase {
       return $this->t('Job not found');
     }
 
-
     $webformId = $this->helper->getWebformIdFromQueue($job->getId());
 
     if (NULL !== $webformId) {
