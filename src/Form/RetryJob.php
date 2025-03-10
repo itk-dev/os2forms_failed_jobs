@@ -64,14 +64,14 @@ final class RetryJob extends ConfirmFormBase {
 
     $webformId = $this->helper->getWebformIdFromQueue($job->getId());
 
-    if (NULL !== $webformId) {
+    if (NULL === $webformId) {
+      return $this->t('Are you sure you want to retry queue job: @jobId', ['@jobId' => $job->getId()]);
+    }
+    else {
       return $this->t('Are you sure you want to retry queue job related to Webform: @webformId, Submission id: @serialId', [
         '@serialId' => $this->helper->getSubmissionSerialIdFromJob($job->getId()),
         '@webformId' => $this->entityTypeManager->getStorage('webform')->load($webformId)->label(),
       ]);
-    }
-    else {
-      return $this->t('Are you sure you want to retry queue job: @jobId', ['@jobId' => $job->getId()]);
     }
   }
 
