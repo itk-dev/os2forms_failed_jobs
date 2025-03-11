@@ -153,7 +153,9 @@ class Helper {
     $query->condition('job_id', $jobId, '=');
     $query->fields('o', ['webform_id']);
 
-    return $query->execute()?->fetchObject()?->webform_id;
+    $result = $query->execute()?->fetchObject();
+
+    return $result ? $result->webform_id : NULL;
   }
 
   /**
