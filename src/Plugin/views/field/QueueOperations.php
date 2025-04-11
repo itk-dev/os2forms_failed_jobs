@@ -13,13 +13,13 @@ use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
 
 /**
- * Field handler to render retry operation for a given job.
+ * Field handler to render custom queue operation for a given job.
  *
  * @ingroup views_field_handlers
  *
- * @ViewsField("advancedqueue_job_retry_operation")
+ * @ViewsField("advancedqueue_job_queue_operations")
  */
-class RetryOperation extends FieldPluginBase {
+class QueueOperations extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
@@ -60,20 +60,26 @@ class RetryOperation extends FieldPluginBase {
   public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
     $operations = [];
 
-    $state = $this->getValue($values, 'state');
     $queue_id = $this->getValue($values, 'queue_id');
     $job_id = $this->getValue($values, 'job_id');
-
-    if ($state === Job::STATE_FAILURE) {
-      $operations['retry'] = [
-        'title' => $this->t('Retry'),
-        'weight' => -10,
-        'url' => Url::fromRoute('advancedqueue.job.retry', [
-          'advancedqueue_queue' => $queue_id,
-          'job_id' => $job_id,
-        ]),
-      ];
-    }
+    $operations['retry'] = [
+      'title' => $this->t('Retry'),
+      'weight' => -10,
+      'url' => Url::fromRoute('advancedqueue.job.retry', [
+        'advancedqueue_queue' => $queue_id,
+        'job_id' => $job_id,
+        'destination' => \Drupal::request()->getRequestUri()
+      ]),
+    ];
+    $operations['handle_manually'] = [
+      'title' => $this->t('Handle manually'),
+      'weight' => -50,
+      'url' => Url::fromRoute('advancedqueue.job.handle_manually', [
+        'advancedqueue_queue' => $queue_id,
+        'job_id' => $job_id,
+        'destination' => \Drupal::request()->getRequestUri()
+      ]),
+    ];
 
     $renderer = $this->getRenderer();
     $renderArray = [

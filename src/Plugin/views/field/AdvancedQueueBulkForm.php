@@ -172,16 +172,8 @@ final class AdvancedQueueBulkForm extends BulkForm {
         if (empty($job)) {
           return;
         }
-        if ('failure' !== $job->getState()) {
-          $this->messenger->addError($this->t('Element with webform submission id: @webform_submit_id already has state: @state', [
-            '@webform_submit_id' => $this->helper->getSubmissionSerialIdFromJob($bulk_form_key),
-            '@state' => $job->getState(),
-          ]));
-          continue;
-        }
 
         $count++;
-
         $entities[$bulk_form_key] = $bulk_form_key;
       }
 

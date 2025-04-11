@@ -22,11 +22,11 @@ function os2forms_failed_jobs_views_data(): array {
     ],
   ];
 
-  $data['advancedqueue']['retry_operation'] = [
-    'title' => t('Retry operation'),
+  $data['advancedqueue']['queue_operations'] = [
+    'title' => t('Queue operations'),
     'help' => t('Provides available operations'),
     'field' => [
-      'id' => 'advancedqueue_job_retry_operation',
+      'id' => 'advancedqueue_job_queue_operations',
     ],
   ];
 
@@ -35,6 +35,14 @@ function os2forms_failed_jobs_views_data(): array {
     'help' => t('Provides a related webform id if one exists in the advanced queue payload'),
     'field' => [
       'id' => 'advancedqueue_job_webform_id',
+    ],
+  ];
+
+  $data['advancedqueue']['webform_label'] = [
+    'title' => t('Webform label'),
+    'help' => t('Provides a related webform label if one exists in the advanced queue payload'),
+    'field' => [
+      'id' => 'advancedqueue_job_webform_label',
     ],
   ];
 
@@ -60,13 +68,59 @@ function os2forms_failed_jobs_views_data(): array {
     ],
   ];
 
+  $data['advancedqueue']['advancedqueue_job_type_retry_strategy'] = [
+    'title' => t('Advanced queue retry strategy description'),
+    'help' => t('Provides a description of the used retry strategy'),
+    'field' => [
+      'id' => 'advancedqueue_job_type_retry_strategy',
+    ],
+  ];
+
+  $data['advancedqueue']['advancedqueue_job_type_max_retries'] = [
+    'title' => t('Advanced queue max retries for job type'),
+    'help' => t('Provides the max possible retries for the job of this type'),
+    'field' => [
+      'id' => 'advancedqueue_job_type_max_retries',
+    ],
+  ];
+
+  $data['advancedqueue']['advancedqueue_job_next_attempt'] = [
+    'title' => t('Advanced queue next processsing attempt'),
+    'help' => t('Provides a countdown to the next processing attempt of a job.'),
+    'field' => [
+      'id' => 'advancedqueue_job_next_attempt',
+    ],
+  ];
+
   $data['advancedqueue']['webform_submission_serial_exists'] = [
     'title' => t('Webform submission serial exists filter'),
-    'help' => t('Provides a filter for checking if webform submission exists from job'),
+    'help' => t('Provides a filter for checking if webform submission exists on a form'),
     'filter' => [
       'title' => t('Submission serial exists'),
       'field' => 'id',
       'id' => 'advancedqueue_job_submission_exists',
+      'allow empty' => TRUE,
+    ],
+  ];
+
+  $data['advancedqueue']['webform_submission_exists_global'] = [
+    'title' => t('Webform submission exists'),
+    'help' => t('Provides a filter for checking if webform submission exists across all webforms'),
+    'filter' => [
+      'title' => t('Submission exists'),
+      'field' => 'id',
+      'id' => 'advancedqueue_job_submission_exists_global',
+      'allow empty' => TRUE,
+    ],
+  ];
+
+  $data['advancedqueue']['webform_label_filter'] = [
+    'title' => t('Webform label filter'),
+    'help' => t('Provides a filter for checking if webform label matches.'),
+    'filter' => [
+      'title' => t('Webform label'),
+      'field' => 'id',
+      'id' => 'advancedqueue_job_webform_label',
       'allow empty' => TRUE,
     ],
   ];
@@ -79,4 +133,19 @@ function os2forms_failed_jobs_views_data(): array {
  */
 function os2forms_failed_jobs_webform_submission_delete(WebformSubmissionInterface $submission): void {
   Drupal::service(Helper::class)->cleanUp($submission);
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function os2forms_failed_jobs_theme() {
+  return [
+    'job_type_retry_strategy' => [
+      'variables' => [
+        'label' => NULL,
+        'data' => NULL,
+      ],
+    ],
+  ];
 }

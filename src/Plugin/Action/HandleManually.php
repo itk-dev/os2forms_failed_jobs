@@ -3,6 +3,7 @@
 namespace Drupal\os2forms_failed_jobs\Plugin\Action;
 
 use Drupal\Core\Action\ActionBase;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -17,12 +18,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Unblocks a user.
  *
  * @Action(
- *   id = "advancedqueue_queue_retry_action",
- *   label = @Translation("Retry processing"),
+ *   id = "advancedqueue_queue_handle_manually_action",
+ *   label = @Translation("Handle manually"),
  *   type = "advancedqueue_queue"
  * )
  */
-final class RetryJob extends ActionBase implements ContainerFactoryPluginInterface {
+final class HandleManually extends ActionBase implements ContainerFactoryPluginInterface {
 
   /**
    * The queue.
@@ -85,6 +86,21 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function execute(?string $jobId = NULL): void {
+    $job = $this->helper->getJobFromId((string) $this->jobId);
+    if (!empty($job)) {
+      $queue_id = $job->getQueueId();
+
+      $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
+      /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+      $queue = $queue_storage->load($queue_id);
+
+      $queue_backend = $queue->getBackend();
+      if ($queue_backend instanceof Database) {
+        $job->setState('success');
+        $queue_backend->onSuccess($job);
+      }
+    }
+
     $job = $this->helper->getJobFromId($jobId);
     if (empty($job)) {
       return;
@@ -97,7 +113,7 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
 
     $queue_backend = $queue->getBackend();
     if ($queue_backend instanceof Database) {
-      $this->helper->retryJob($job, $queue_backend);
+      $this->helper->handleManually($job, $queue_backend);
     }
   }
 

@@ -5,16 +5,26 @@ namespace Drupal\os2forms_failed_jobs\Helper;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\advancedqueue\Job;
+use Drupal\Core\Messenger\MessengerTrait;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\webform\WebformSubmissionInterface;
+use Drupal\webform_submission_log\WebformSubmissionLogManagerInterface;
+use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 
 /**
  * Helper for managing failed jobs.
  */
 class Helper {
+
+  use StringTranslationTrait;
+  use MessengerTrait;
 
   /**
    * The helper service constructor.
@@ -30,6 +40,8 @@ class Helper {
     protected EntityTypeManager $entityTypeManager,
     protected Connection $connection,
     public LoggerChannelFactory $loggerFactory,
+    protected WebformSubmissionLogManagerInterface $webformSubmissionLogManager,
+    protected AccountProxyInterface $currentUser
   ) {}
 
   /**
@@ -40,6 +52,7 @@ class Helper {
    *
    * @return \Drupal\advancedqueue\Job|null
    *   A list of attributes related to a job.
+   * @throws \Exception
    */
   public function getJobFromId(string $jobId): Job|NULL {
     $query = $this->connection->select('advancedqueue', 'a');
@@ -67,6 +80,7 @@ class Helper {
    *
    * @return int|null
    *   The id of a form submission from a job.
+   * @throws \Exception
    */
   public function getSubmissionIdFromJob(string $jobId): ?int {
     $job = $this->getJobFromId($jobId);
@@ -88,6 +102,7 @@ class Helper {
    *   A list of view parameters.
    *
    * @phpstan-return array<string, mixed>
+   * @throws \Exception
    */
   public function getQueueJobIds(string $formId): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
@@ -102,6 +117,8 @@ class Helper {
    *
    * @param \Drupal\advancedqueue\Job $job
    *   The job about to be processed.
+   *
+   * @throws \Exception
    */
   public function handleJob(Job $job): void {
     $data = $this->getDataFromJob($job);
@@ -147,6 +164,7 @@ class Helper {
    *
    * @return string|null
    *   The webform id.
+   * @throws \Exception
    */
   public function getWebformIdFromQueue(string $jobId): ?string {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
@@ -166,10 +184,14 @@ class Helper {
    *
    * @return int
    *   The serial id.
+   * @throws \Exception
    */
   public function getSubmissionSerialIdFromJob(string $jobId): int {
     try {
       $submissionId = $this->getSubmissionIdFromJob($jobId);
+      if (empty($submissionId)) {
+        return 0;
+      }
       $submission = $this->getWebformSubmission($submissionId);
 
       if (!empty($submission)) {
@@ -195,6 +217,7 @@ class Helper {
    *   A list of matching jobs.
    *
    * @phpstan-return array<int, mixed>
+   * @throws \Exception
    */
   public function getQueueJobIdsFromSubmissionId(string $submissionId): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
@@ -216,6 +239,7 @@ class Helper {
    *   A list of matching jobs.
    *
    * @phpstan-return array<int, mixed>
+   * @throws \Exception
    */
   public function getQueueJobIdsFromSerial(string $serial, string $webformId): array {
     $query = $this->connection->select('webform_submission', 'w');
@@ -276,6 +300,8 @@ class Helper {
    *   A list of queue submission relations.
    *
    * @phpstan-return array<string, mixed>
+   *
+   * @throws \Exception
    */
   public function getDetachedQueueSubmissionRelations(?string $submissionId = NULL): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
@@ -294,6 +320,8 @@ class Helper {
    *   List of entries with job_id and submission_id.
    *
    * @phpstan-param array<string, mixed> $entries
+   *
+   * @throws \Exception
    */
   public function removeRelations(array $entries): void {
     foreach ($entries as $entry) {
@@ -318,10 +346,79 @@ class Helper {
    *
    * @param \Drupal\webform\WebformSubmissionInterface|null $submission
    *   A webform submission.
+   *
+   * @throws \Exception
    */
   public function cleanUp(?WebformSubmissionInterface $submission = NULL): void {
     $relations = $this->getDetachedQueueSubmissionRelations($submission?->id());
     $this->removeRelations($relations);
+  }
+
+  /**
+   * Mark a submission from advanced queue to be handled manually.
+   *
+   * @param Job $job
+   *   The job.
+   * @param Database $queue_backend
+   *   The queue backend.
+   *
+   * @return void
+   */
+  public function handleManually($job, Database $queue_backend): void {
+    try {
+      $job->setState('success');
+
+      $this->createSubmissionLogEntry([
+        'webform_id' => $this->getWebformIdFromQueue($job->getId()),
+        'sid' => $this->getSubmissionIdFromJob($job->getId()),
+        'handler_id' => '',
+        'operation' => 'selected for manual handling',
+        'uid' => $this->currentUser->id(),
+        'message' => $this->t('Submission removed from error log. Selected for manual handling.'),
+        'variables' => serialize([]),
+        'data' => serialize([]),
+        'timestamp' => (new DrupalDateTime())->getTimestamp(),
+      ]);
+
+      $queue_backend->onSuccess($job);
+
+      $link = Link::createFromRoute('Go to submission log', 'entity.webform_submission.log', [
+        'webform' => $this->getWebformIdFromQueue($job->getId()),
+        'webform_submission' => $this->getSubmissionIdFromJob($job->getId()),
+      ])->toString();
+
+      $this->messenger()->addMessage($this->t('Submission removed from error log and added to submission log for manual handling. @link', ['@link' => $link]));
+    }
+    catch (\Exception $e) {
+      $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
+        ->error($e->getMessage());
+    }
+  }
+
+  /**
+   * Retry a job
+   *
+   * @param Job $job
+   *   The job.
+   * @param Database $queue_backend
+   *   The queue backend.
+   *
+   * @return void
+   */
+  public function retryJob($job, Database $queue_backend): void {
+    try {
+      $job->setState('failure');
+      $job->setNumRetries(0);
+      $job->setProcessedTime(0);
+      $queue_backend->retryJob($job);
+    } catch (\Exception $e) {
+      $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
+        ->error($e->getMessage());
+    }
+  }
+
+  public function createSubmissionLogEntry(array $fields): void {
+    $this->webformSubmissionLogManager->insert($fields);
   }
 
   /**
@@ -331,6 +428,8 @@ class Helper {
    *   A list of all entries from the advanced queue table.
    *
    * @phpstan-return array<int, mixed>
+   *
+   * @throws \Exception
    */
   private function getAllQueueJobs(): array {
     $query = $this->connection->select('advancedqueue', 'q');
@@ -390,6 +489,8 @@ class Helper {
    *   A list of all relations.
    *
    * @phpstan-return array<int, mixed>
+   *
+   * @throws \Exception
    */
   private function getAllRelations(): array {
     $query = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
@@ -403,6 +504,8 @@ class Helper {
    *
    * @param string $submissionId
    *   The advanced queue submission id.
+   *
+   * @throws \Exception
    */
   private function removeQueueSubmissionRelation(string $submissionId): void {
     // Delete os2forms_failed_jobs_queue_submission_relation.

@@ -3,7 +3,9 @@ services:
     arguments: [
       '@entity_type.manager',
       '@database',
-      '@logger.factory'
+      '@logger.factory',
+      '@webform_submission_log.manager',
+      '@current_user'
     ]
 
   Drupal\os2forms_failed_jobs\EventSubscriber\AdvancedQueueProcessSubscriber:

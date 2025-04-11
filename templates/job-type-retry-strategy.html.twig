@@ -1,0 +1,37 @@
+<h4>{{ 'Retry status'|t }}</h4>
+<div>{{ 'Shows when the job will be picked up by cron next time and how many attempts have been tried. "Job awaiting cron" means the job will be processed at next cron run.'|t }}</div>
+<br>
+<div>
+  <span><strong>{{ 'Jobtype'|t }}</strong>:</span>
+  <span>{{ data.label }}</span>
+</div>
+<br>
+{% if data.plugin.max_retries %}
+  <div>
+    <div>
+      <span><strong>{{ 'Max retries'|t }}</strong>:</span>
+      <span>{{ data.plugin.max_retries }}</span>
+    </div>
+    <small>{{ 'The number of times a job will retry before failing.'|t }}</small>
+  </div>
+  <br>
+{% endif %}
+{% if data.plugin.retry_delay %}
+  <div>
+    <div>
+      <span><strong>{{ 'Interval'|t }}</strong>:</span>
+      <span>{{ data.plugin.retry_delay }}</span>
+    </div>
+    <small>{{ 'Time in seconds between each retry attempt, before a retry multiplier is added.'|t }}</small>
+  </div>
+  <br>
+{% endif %}
+{% if data.plugin.retry_multiplier %}
+  <div>
+    <div>
+      <span><strong>{{ 'Retry multiplier'|t }}</strong>:</span>
+      <span>{{ data.plugin.retry_multiplier }}</span>
+    </div>
+    <small>{{ 'A multiplier is added between each retry. I.e. If the multiplier is 2, the time between each retry would increase eksponentially: 1, 2, 4, 8, 16 etc.'|t }}</small>
+  </div>
+{% endif %}
