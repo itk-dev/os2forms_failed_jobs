@@ -13,7 +13,7 @@ use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Unblocks a user.
+ * Handle a job manually.
  *
  * @Action(
  *   id = "advancedqueue_queue_handle_manually_action",
@@ -84,7 +84,7 @@ final class HandleManually extends ActionBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function execute(?string $jobId = NULL): void {
-    $job = $this->helper->getJobFromId((string) $this->jobId);
+    $job = $this->helper->getJobFromId((string) $jobId);
     if (!empty($job)) {
       $queue_id = $job->getQueueId();
 

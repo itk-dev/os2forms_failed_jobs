@@ -18,17 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class HandleJobManually extends ConfirmFormBase {
   /**
    * The job ID to release.
-   *
-   * @var int
    */
   protected int $jobId;
-
-  /**
-   * The url to redirect to.
-   *
-   * @var int
-   */
-  protected url $redirectUrl;
 
   /**
    * Retry job constructor.

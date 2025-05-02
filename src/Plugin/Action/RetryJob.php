@@ -13,7 +13,7 @@ use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Unblocks a user.
+ * Retry a job.
  *
  * @Action(
  *   id = "advancedqueue_queue_retry_action",
@@ -84,7 +84,7 @@ final class RetryJob extends ActionBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function execute(?string $jobId = NULL): void {
-    $job = $this->helper->getJobFromId($jobId);
+    $job = $this->helper->getJobFromId((string) $jobId);
     if (empty($job)) {
       return;
     }
