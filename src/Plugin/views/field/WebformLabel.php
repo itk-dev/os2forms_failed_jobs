@@ -10,7 +10,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use AllowDynamicProperties;
 
 /**
  * Field handler to render webform label for a given job.
@@ -97,14 +96,16 @@ final class WebformLabel extends FieldPluginBase {
    * @throws \Exception
    */
   public function render(ResultRow $values) {
+    $renderArray = [];
     if (isset($values->job_id)) {
       $webformId = $this->helper->getWebformIdFromQueue($values->job_id);
       $webform = $this->entityTypeManager->getStorage('webform')->load($webformId);
+
+      $renderer = $this->getRenderer();
+      $renderArray = [
+        '#markup' => $webform ? $webform->label() : '',
+      ];
     }
-    $renderer = $this->getRenderer();
-    $renderArray = [
-      '#markup' => $webform ? $webform->label() : '',
-    ];
 
     return $renderer->render($renderArray);
   }

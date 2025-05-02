@@ -69,11 +69,6 @@ final class WebformLabelFilter extends StringFilter {
       foreach ($webforms as $webform) {
         $jobs = [...$jobs, ...$this->helper->getQueueJobIds($webform)];
       }
-
-      if (empty($jobs)) {
-        // The 'IN' operator requires a non empty array.
-        $jobs = [0];
-      }
     }
 
     $query->addWhere($this->options['group'], $table . '.job_id', $jobs, 'IN');
