@@ -63,17 +63,18 @@ class JobTypeRetryStrategy extends FieldPluginBase {
    * @throws \Exception
    */
   public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
+    $renderArray = [];
     $renderer = $this->getRenderer();
     if (!empty($values->advancedqueue_type)) {
       $jobTypePlugin = $this->jobTypeManager->createInstance($values->advancedqueue_type);
+      $renderArray = [
+        '#theme' => 'job_type_retry_strategy',
+        '#data' => [
+          'label' => $jobTypePlugin->getLabel(),
+          'plugin' => $jobTypePlugin->getPluginDefinition(),
+        ],
+      ];
     }
-    $renderArray = [
-      '#theme' => 'job_type_retry_strategy',
-      '#data' => [
-        'label' => $jobTypePlugin->getLabel(),
-        'plugin' => $jobTypePlugin->getPluginDefinition(),
-      ],
-    ];
 
     return $renderer->render($renderArray);
   }

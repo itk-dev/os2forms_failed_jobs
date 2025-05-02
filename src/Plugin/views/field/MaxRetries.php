@@ -63,13 +63,14 @@ class MaxRetries extends FieldPluginBase {
    * @throws \Exception
    */
   public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
+    $renderArray = [];
     $renderer = $this->getRenderer();
     if (!empty($values->advancedqueue_type)) {
       $jobTypePlugin = $this->jobTypeManager->createInstance($values->advancedqueue_type);
+      $renderArray = [
+        '#markup' => $jobTypePlugin->getPluginDefinition()['max_retries'] ?? '',
+      ];
     }
-    $renderArray = [
-      '#markup' => $jobTypePlugin->getPluginDefinition()['max_retries'] ?? '',
-    ];
 
     return $renderer->render($renderArray);
   }

@@ -18,7 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ViewsField("advancedqueue_job_webform_label")
  */
-#[AllowDynamicProperties] final class WebformLabel extends FieldPluginBase {
+#[AllowDynamicProperties]
+final class WebformLabel extends FieldPluginBase {
 
   /**
    * The helper service.
