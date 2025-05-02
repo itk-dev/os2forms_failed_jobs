@@ -4,6 +4,12 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 
 ## [Under udvikling]
 
+## [1.7.0] 2025-05-02
+
+* Updaterer minimal php version
+* Tilføj peronaliseret view til error log
+* Ændre advanced queue
+
 ## [1.6.0] 2025-03-11
 
 * Tillod jobs uden relation til indsendelser at blive genkørt.

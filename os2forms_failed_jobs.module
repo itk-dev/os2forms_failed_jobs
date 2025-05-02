@@ -22,6 +22,14 @@ function os2forms_failed_jobs_views_data(): array {
     ],
   ];
 
+  $data['advancedqueue']['retry_operation'] = [
+    'title' => t('Retry operation'),
+    'help' => t('Provides available operations'),
+    'field' => [
+      'id' => 'advancedqueue_job_retry_operation',
+    ],
+  ];
+
   $data['advancedqueue']['queue_operations'] = [
     'title' => t('Queue operations'),
     'help' => t('Provides available operations'),
