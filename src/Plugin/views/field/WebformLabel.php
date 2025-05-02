@@ -10,6 +10,7 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use AllowDynamicProperties;
 
 /**
  * Field handler to render webform label for a given job.
@@ -18,7 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ViewsField("advancedqueue_job_webform_label")
  */
-#[AllowDynamicProperties]
 final class WebformLabel extends FieldPluginBase {
 
   /**
