@@ -2,11 +2,13 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
+use Drupal\views\Render\ViewsRenderPipelineMarkup;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -95,13 +97,14 @@ final class WebformLabel extends FieldPluginBase {
    *
    * @throws \Exception
    */
-  public function render(ResultRow $values) {
+  public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
+    $renderer = $this->getRenderer();
     $renderArray = [];
+
     if (isset($values->job_id)) {
       $webformId = $this->helper->getWebformIdFromQueue($values->job_id);
       $webform = $this->entityTypeManager->getStorage('webform')->load($webformId);
 
-      $renderer = $this->getRenderer();
       $renderArray = [
         '#markup' => $webform ? $webform->label() : '',
       ];
