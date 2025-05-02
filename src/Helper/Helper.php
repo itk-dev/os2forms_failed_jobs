@@ -428,7 +428,7 @@ class Helper {
   /**
    * Create a submission log entry.
    *
-   * @param array $fields
+   * @param array<string, mixed> $fields
    *   List of fields.
    */
   public function createSubmissionLogEntry(array $fields): void {
