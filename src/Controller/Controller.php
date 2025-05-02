@@ -129,6 +129,7 @@ final class Controller extends ControllerBase {
    *
    * @return array<string, mixed>
    *   The rendered message.
+   *
    * @throws \Exception
    */
   public function jobMessage(): array {
@@ -155,6 +156,7 @@ final class Controller extends ControllerBase {
    *
    * @return array<string, mixed>
    *   The rendered message.
+   *
    * @throws \Exception
    */
   public function retryStrategyMessage(): array {
@@ -199,4 +201,5 @@ final class Controller extends ControllerBase {
   public function myTitle(): TranslatableMarkup {
     return $this->t('Failed jobs on my forms');
   }
+
 }

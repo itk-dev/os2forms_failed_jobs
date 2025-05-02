@@ -66,7 +66,7 @@ final class WebformLabelFilter extends StringFilter {
     $jobs = ['0'];
 
     if ($webforms) {
-      foreach($webforms as $webform) {
+      foreach ($webforms as $webform) {
         $jobs = [...$jobs, ...$this->helper->getQueueJobIds($webform)];
       }
 

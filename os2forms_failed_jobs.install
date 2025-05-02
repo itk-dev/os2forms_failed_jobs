@@ -6,9 +6,6 @@
  */
 
 use Drupal\os2forms_failed_jobs\Helper\Helper;
-use Drupal\views\Entity\View;
-use Symfony\Component\Yaml\Yaml;
-use Drupal\system\Entity\Action;
 
 /**
  * Implements hook_schema().

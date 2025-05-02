@@ -5,7 +5,6 @@ namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\advancedqueue\Job;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Render\ViewsRenderPipelineMarkup;
@@ -68,7 +67,7 @@ class QueueOperations extends FieldPluginBase {
       'url' => Url::fromRoute('advancedqueue.job.retry', [
         'advancedqueue_queue' => $queue_id,
         'job_id' => $job_id,
-        'destination' => \Drupal::request()->getRequestUri()
+        'destination' => \Drupal::request()->getRequestUri(),
       ]),
     ];
     $operations['handle_manually'] = [
@@ -77,7 +76,7 @@ class QueueOperations extends FieldPluginBase {
       'url' => Url::fromRoute('advancedqueue.job.handle_manually', [
         'advancedqueue_queue' => $queue_id,
         'job_id' => $job_id,
-        'destination' => \Drupal::request()->getRequestUri()
+        'destination' => \Drupal::request()->getRequestUri(),
       ]),
     ];
 

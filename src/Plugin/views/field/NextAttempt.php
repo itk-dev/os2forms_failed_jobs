@@ -4,7 +4,6 @@ namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Url;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Render\ViewsRenderPipelineMarkup;
@@ -51,6 +50,7 @@ class NextAttempt extends FieldPluginBase {
       $container->get(Helper::class),
     );
   }
+
   /**
    * {@inheritdoc}
    *
@@ -78,9 +78,9 @@ class NextAttempt extends FieldPluginBase {
     }
     else {
       $diff = $dateAvailable->diff($now);
-      $title .= (int)$diff->format('%a') > 0 ? $diff->format('%a days') : '';
-      $title .= (int)$diff->format('%h') > 0 ? $diff->format('%h hours') : '';
-      $title .= (int)$diff->format('%i') > 0 ? $diff->format('%i minutes') : '';
+      $title .= (int) $diff->format('%a') > 0 ? $diff->format('%a days') : '';
+      $title .= (int) $diff->format('%h') > 0 ? $diff->format('%h hours') : '';
+      $title .= (int) $diff->format('%i') > 0 ? $diff->format('%i minutes') : '';
       if (empty($title)) {
         $title = $this->t('> 1 minute');
       }

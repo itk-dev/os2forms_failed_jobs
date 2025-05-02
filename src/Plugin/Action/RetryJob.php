@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\advancedqueue\Entity\QueueInterface;
-use Drupal\advancedqueue\Job;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\advancedqueue\ProcessorInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;

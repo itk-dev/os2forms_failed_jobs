@@ -135,7 +135,6 @@ function os2forms_failed_jobs_webform_submission_delete(WebformSubmissionInterfa
   Drupal::service(Helper::class)->cleanUp($submission);
 }
 
-
 /**
  * Implements hook_theme().
  */

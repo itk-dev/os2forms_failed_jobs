@@ -2,7 +2,6 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 
-use AllowDynamicProperties;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;

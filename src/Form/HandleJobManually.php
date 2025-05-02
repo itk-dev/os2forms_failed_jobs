@@ -3,17 +3,14 @@
 namespace Drupal\os2forms_failed_jobs\Form;
 
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\advancedqueue\Job;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Provides a confirmation form for retrying a job.
@@ -108,6 +105,7 @@ final class HandleJobManually extends ConfirmFormBase {
    *
    * @phpstan-param array<string, mixed> $form
    * @phpstan-return void
+   *
    * @throws \Exception
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {

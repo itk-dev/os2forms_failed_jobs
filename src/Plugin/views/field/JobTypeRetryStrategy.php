@@ -49,6 +49,7 @@ class JobTypeRetryStrategy extends FieldPluginBase {
       $container->get('plugin.manager.advancedqueue_job_type'),
     );
   }
+
   /**
    * {@inheritdoc}
    *

@@ -35,13 +35,17 @@ class Helper {
    *   The database connection.
    * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    *   The logger factory.
+   * @param \Drupal\webform_submission_log\WebformSubmissionLogManagerInterface $webformSubmissionLogManager
+   *   The submission log manager.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user.
    */
   public function __construct(
     protected EntityTypeManager $entityTypeManager,
     protected Connection $connection,
     public LoggerChannelFactory $loggerFactory,
     protected WebformSubmissionLogManagerInterface $webformSubmissionLogManager,
-    protected AccountProxyInterface $currentUser
+    protected AccountProxyInterface $currentUser,
   ) {}
 
   /**
@@ -52,6 +56,7 @@ class Helper {
    *
    * @return \Drupal\advancedqueue\Job|null
    *   A list of attributes related to a job.
+   *
    * @throws \Exception
    */
   public function getJobFromId(string $jobId): Job|NULL {
@@ -80,6 +85,7 @@ class Helper {
    *
    * @return int|null
    *   The id of a form submission from a job.
+   *
    * @throws \Exception
    */
   public function getSubmissionIdFromJob(string $jobId): ?int {
@@ -102,6 +108,7 @@ class Helper {
    *   A list of view parameters.
    *
    * @phpstan-return array<string, mixed>
+   *
    * @throws \Exception
    */
   public function getQueueJobIds(string $formId): array {
@@ -164,6 +171,7 @@ class Helper {
    *
    * @return string|null
    *   The webform id.
+   *
    * @throws \Exception
    */
   public function getWebformIdFromQueue(string $jobId): ?string {
@@ -184,6 +192,7 @@ class Helper {
    *
    * @return int
    *   The serial id.
+   *
    * @throws \Exception
    */
   public function getSubmissionSerialIdFromJob(string $jobId): int {
@@ -217,6 +226,7 @@ class Helper {
    *   A list of matching jobs.
    *
    * @phpstan-return array<int, mixed>
+   *
    * @throws \Exception
    */
   public function getQueueJobIdsFromSubmissionId(string $submissionId): array {
@@ -239,6 +249,7 @@ class Helper {
    *   A list of matching jobs.
    *
    * @phpstan-return array<int, mixed>
+   *
    * @throws \Exception
    */
   public function getQueueJobIdsFromSerial(string $serial, string $webformId): array {
@@ -357,12 +368,10 @@ class Helper {
   /**
    * Mark a submission from advanced queue to be handled manually.
    *
-   * @param Job $job
+   * @param \Drupal\advancedqueue\Job $job
    *   The job.
-   * @param Database $queue_backend
+   * @param \Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database $queue_backend
    *   The queue backend.
-   *
-   * @return void
    */
   public function handleManually($job, Database $queue_backend): void {
     try {
@@ -396,14 +405,12 @@ class Helper {
   }
 
   /**
-   * Retry a job
+   * Retry a job.
    *
-   * @param Job $job
+   * @param \Drupal\advancedqueue\Job $job
    *   The job.
-   * @param Database $queue_backend
+   * @param \Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database $queue_backend
    *   The queue backend.
-   *
-   * @return void
    */
   public function retryJob($job, Database $queue_backend): void {
     try {
@@ -411,12 +418,19 @@ class Helper {
       $job->setNumRetries(0);
       $job->setProcessedTime(0);
       $queue_backend->retryJob($job);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
         ->error($e->getMessage());
     }
   }
 
+  /**
+   * Create a submission log entry.
+   *
+   * @param array $fields
+   *   List of fields.
+   */
   public function createSubmissionLogEntry(array $fields): void {
     $this->webformSubmissionLogManager->insert($fields);
   }
