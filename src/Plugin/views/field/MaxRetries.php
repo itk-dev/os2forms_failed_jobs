@@ -19,21 +19,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MaxRetries extends FieldPluginBase {
 
   /**
-   * Job type manager service.
-   *
-   * @var \Drupal\advancedqueue\JobTypeManager
-   */
-  protected JobTypeManager $jobTypeManager;
-
-  /**
    * Class constructor.
    *
    * @phpstan-param array<string, mixed> $configuration
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, JobTypeManager $jobTypeManager) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, protected JobTypeManager $jobTypeManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->jobTypeManager = $jobTypeManager;
   }
 
   /**

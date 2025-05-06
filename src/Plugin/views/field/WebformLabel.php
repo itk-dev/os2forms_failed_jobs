@@ -23,29 +23,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class WebformLabel extends FieldPluginBase {
 
   /**
-   * The helper service.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
    * Class constructor.
    *
    * @phpstan-param array<string, mixed> $configuration
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, Helper $helper, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, protected Helper $helper, protected EntityTypeManagerInterface $entityTypeManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->helper = $helper;
-    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**

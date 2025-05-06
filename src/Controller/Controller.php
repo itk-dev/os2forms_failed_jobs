@@ -4,7 +4,6 @@ namespace Drupal\os2forms_failed_jobs\Controller;
 
 use Drupal\advancedqueue\JobTypeManager;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
@@ -18,42 +17,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class Controller extends ControllerBase {
 
   /**
-   * Failed jobs helper.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
-   * Request stack.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
-   */
-  protected RequestStack $requestStack;
-
-  /**
-   * Request stack.
-   *
-   * @var \Drupal\Core\Render\RendererInterface
-   */
-  protected RendererInterface $renderer;
-
-  /**
-   * Request stack.
-   *
-   * @var \Drupal\advancedqueue\JobTypeManager
-   */
-  protected JobTypeManager $jobTypeManager;
-
-  /**
    * Failed jobs constructor.
    */
-  public function __construct(EntityTypeManager $entityTypeManager, Helper $helper, RequestStack $requestStack, RendererInterface $renderer, JobTypeManager $jobTypeManager) {
-    $this->entityTypeManager = $entityTypeManager;
-    $this->helper = $helper;
-    $this->requestStack = $requestStack;
-    $this->renderer = $renderer;
-    $this->jobTypeManager = $jobTypeManager;
+  public function __construct(
+    protected $entityTypeManager,
+    protected Helper $helper,
+    protected RequestStack $requestStack,
+    protected RendererInterface $renderer,
+    protected JobTypeManager $jobTypeManager
+  ) {
   }
 
   /**
@@ -104,7 +76,7 @@ final class Controller extends ControllerBase {
    *
    * @phpstan-return array<string, mixed>
    */
-  public function myFormErrors(): array {
+  public function renderMyFailedJobs(): array {
     $webforms = $this->entityTypeManager->getStorage('webform')->loadMultiple();
     $jobIds = [];
     foreach ($webforms as $webform) {
@@ -198,7 +170,7 @@ final class Controller extends ControllerBase {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   A translatable string.
    */
-  public function myTitle(): TranslatableMarkup {
+  public function myFailedJobsTitle(): TranslatableMarkup {
     return $this->t('Failed jobs on my forms');
   }
 

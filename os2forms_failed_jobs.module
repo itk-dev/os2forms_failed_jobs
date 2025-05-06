@@ -60,6 +60,12 @@ function os2forms_failed_jobs_views_data(): array {
     'field' => [
       'id' => 'advancedqueue_job_webform_submission_id',
     ],
+    'filter' => [
+      'title' => t('Submission id'),
+      'field' => 'id',
+      'id' => 'advancedqueue_job_submission_id',
+      'allow empty' => TRUE,
+    ],
   ];
 
   $data['advancedqueue']['webform_submission_serial_id'] = [

@@ -15,8 +15,8 @@ entity.webform.error_log:
 entity.webform.error_log.personalized:
   path: '/failed-jobs/my-forms'
   defaults:
-    _controller: '\Drupal\os2forms_failed_jobs\Controller\Controller::myFormErrors'
-    _title_callback: '\Drupal\os2forms_failed_jobs\Controller\Controller::myTitle'
+    _controller: '\Drupal\os2forms_failed_jobs\Controller\Controller::renderMyFailedJobs'
+    _title_callback: '\Drupal\os2forms_failed_jobs\Controller\Controller::myFailedJobsTitle'
   requirements:
     _permission: 'access webform advanced queue overview'
 
