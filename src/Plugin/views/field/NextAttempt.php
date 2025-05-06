@@ -81,7 +81,7 @@ class NextAttempt extends FieldPluginBase {
         $title .= (int) $diff->format('%h') > 0 ? $diff->format('%h hours') : '';
         $title .= (int) $diff->format('%i') > 0 ? $diff->format('%i minutes') : '';
         if (empty($title)) {
-          $title = $this->t('> 1 minute');
+          $title = $this->t('< 1 minute');
         }
       }
     }
