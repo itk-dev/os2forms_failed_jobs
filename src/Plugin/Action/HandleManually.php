@@ -57,23 +57,9 @@ final class HandleManually extends ActionBase implements ContainerFactoryPluginI
 
   /**
    * {@inheritdoc}
+   * @throws \Exception
    */
   public function execute(?string $jobId = NULL): void {
-    $job = $this->helper->getJobFromId((string) $jobId);
-    if (!empty($job)) {
-      $queue_id = $job->getQueueId();
-
-      $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
-      /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
-      $queue = $queue_storage->load($queue_id);
-
-      $queue_backend = $queue->getBackend();
-      if ($queue_backend instanceof Database) {
-        $job->setState('success');
-        $queue_backend->onSuccess($job);
-      }
-    }
-
     $job = $this->helper->getJobFromId($jobId);
     if (empty($job)) {
       return;
