@@ -62,7 +62,7 @@ final class HandleJobManually extends ConfirmFormBase {
     $webformId = $this->helper->getWebformIdFromQueue($job->getId());
 
     if (NULL === $webformId) {
-      return $this->t('Are you sure you want to retry queue job: @jobId', ['@jobId' => $job->getId()]);
+      return $this->t('Are you sure you want to release queue job: @jobId', ['@jobId' => $job->getId()]);
     }
     else {
       return $this->t('Are you sure you want to manually handle queue job related to Webform: @webformId, Submission id: @serialId', [
