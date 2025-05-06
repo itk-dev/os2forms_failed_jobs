@@ -13,7 +13,7 @@ use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a confirmation form for retrying a job.
+ * Provides a confirmation form for releasing a job.
  */
 final class HandleJobManually extends ConfirmFormBase {
   /**
