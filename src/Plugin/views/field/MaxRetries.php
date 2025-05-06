@@ -10,7 +10,7 @@ use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Field handler to render the retry strategy for a job.
+ * Field handler to render max retries for a job.
  *
  * @ingroup views_field_handlers
  *
