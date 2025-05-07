@@ -122,7 +122,7 @@ final class Controller extends ControllerBase {
     $view->execute();
     $renderedView = $view->render() ?? ['#markup' => $this->t('No failed jobs')];
 
-    $renderedView['#prefix'] = $this->t('List of failed queue jobs across all forms you have access to. Retrying a job puts it back into the queue for reprocessing shortly. Manual handling cancels further attempts to handle the task, and any futher work on the submission must be managed personally.');
+    $renderedView['#prefix'] = $this->t('List of failed queue jobs across all forms you have access to. Retrying a job puts it back into the queue for reprocessing shortly. Manual handling cancels further attempts to process the job, and any futher work on the submission must be managed personally.');
 
     return $renderedView;
   }
