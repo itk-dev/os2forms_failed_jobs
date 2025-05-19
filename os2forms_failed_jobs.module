@@ -158,3 +158,36 @@ function os2forms_failed_jobs_theme() {
     ],
   ];
 }
+
+/**
+ * Implements hook_advanced_queue_job_type_info_alter().
+ */
+function os2forms_failed_jobs_advancedqueue_job_type_info_alter(array &$definitions) {
+  // Default attributes for job type definition for os2forms.
+  // This will override the plugin definition defined in the module.
+  $defaultAttributes = [
+    'max_retries' => 5,
+    'retry_delay' => 60,
+    'retry_multiplier' => 32,
+  ];
+
+  // List of jobtypes that should use the os2forms default job type definition.
+  $useDefault = [
+    'os2forms_api_request_handler',
+    'os2forms_digital_post',
+    'os2forms_fasit',
+    'os2forms_fbs_handler',
+    'os2forms_forloeb',
+    'os2forms_get_organized',
+    'os2forms_payment',
+    'os2web_audit'
+  ];
+
+  foreach ($definitions as $key => $definition) {
+    if (in_array($definition['provider'], $useDefault)) {
+      $definitions[$key]['max_retries'] = $defaultAttributes['max_retries'];
+      $definitions[$key]['retry_delay'] = $defaultAttributes['retry_delay'];
+      $definitions[$key]['retry_multiplier'] = $defaultAttributes['retry_multiplier'];
+    }
+  }
+}
