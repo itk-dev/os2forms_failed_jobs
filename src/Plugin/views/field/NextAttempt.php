@@ -77,9 +77,9 @@ class NextAttempt extends FieldPluginBase {
       }
       else {
         $diff = $dateAvailable->diff($now);
-        $title .= (int) $diff->format('%a') > 0 ? $diff->format('%a days') : '';
-        $title .= (int) $diff->format('%h') > 0 ? $diff->format('%h hours') : '';
-        $title .= (int) $diff->format('%i') > 0 ? $diff->format('%i minutes') : '';
+        $title .= (int) $diff->format('%a') > 0 ? $diff->format('%a days') . ' ' : '';
+        $title .= (int) $diff->format('%h') > 0 ? $diff->format('%h hours') . ' ' : '';
+        $title .= (int) $diff->format('%i') > 0 ? $diff->format('%i minutes') . ' ' : '';
         if (empty($title)) {
           $title = $this->t('< 1 minute');
         }

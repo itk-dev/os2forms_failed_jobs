@@ -18,7 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Action(
  *   id = "advancedqueue_queue_handle_manually_action",
  *   label = @Translation("Handle manually"),
- *   type = "advancedqueue_queue"
+ *   type = "advancedqueue_queue",
+ *   confirm_form_route_name = "os2forms_failed_jobs.bulk_confirm_form"
  * )
  */
 final class HandleManually extends ActionBase implements ContainerFactoryPluginInterface {

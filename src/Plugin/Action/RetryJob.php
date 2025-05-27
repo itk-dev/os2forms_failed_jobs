@@ -18,7 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Action(
  *   id = "advancedqueue_queue_retry_action",
  *   label = @Translation("Retry processing"),
- *   type = "advancedqueue_queue"
+ *   type = "advancedqueue_queue",
+ *   confirm_form_route_name = "os2forms_failed_jobs.bulk_confirm_form"
  * )
  */
 final class RetryJob extends ActionBase implements ContainerFactoryPluginInterface {
