@@ -36,6 +36,14 @@ advancedqueue.job.handle_manually:
   requirements:
     _permission: 'access webform advanced queue overview'
 
+os2forms_failed_jobs.bulk_confirm_form:
+  path: '/os2forms_failed_jobs/jobs/bulk_confirm_form'
+  defaults:
+    _form: '\Drupal\os2forms_failed_jobs\Form\BulkConfirmForm'
+    _title: 'Confirm action'
+  requirements:
+    _permission: 'access webform advanced queue overview'
+
 os2forms_failed_jobs.advancedqueue.job.message:
   path: '/os2forms_failed_jobs/{webform}/jobs/{job_id}/message'
   defaults:

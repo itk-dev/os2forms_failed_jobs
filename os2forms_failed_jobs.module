@@ -122,6 +122,20 @@ function os2forms_failed_jobs_views_data(): array {
     ],
   ];
 
+  $data['advancedqueue']['webform_submission_created'] = [
+    'title' => t('Webform submission created'),
+    'help' => t('Provides a filter and field for submission created time'),
+    'field' => [
+      'id' => 'advancedqueue_job_submission_created',
+    ],
+    'filter' => [
+      'title' => t('Submission created'),
+      'field' => 'id',
+      'id' => 'advancedqueue_job_submission_created',
+      'allow empty' => TRUE,
+    ],
+  ];
+
   $data['advancedqueue']['webform_label_filter'] = [
     'title' => t('Webform label filter'),
     'help' => t('Provides a filter for checking if webform label matches.'),
