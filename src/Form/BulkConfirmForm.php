@@ -58,7 +58,6 @@ class BulkConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion(): TranslatableMarkup {
-    $selections = $this->tempStore->get($this->helper->getCurrentUser()->id() . ':selection');
     return $this->t('Continue?');
   }
 
@@ -68,10 +67,15 @@ class BulkConfirmForm extends ConfirmFormBase {
    */
   public function getDescription(): TranslatableMarkup {
     $selections = $this->tempStore->get($this->helper->getCurrentUser()->id() . ':selection');
-    return $this->t('You are about to perform "@action_label" on @count queue errors. Are you sure you want to continue?', [
-      '@action_label' => $selections['action']->get('label'),
-      '@count' => count($selections['entities'])
-    ]);
+    if ($selections) {
+      return $this->t('You are about to perform "@action_label" on @count queue errors. Are you sure you want to continue?', [
+        '@action_label' => $selections['action']->get('label'),
+        '@count' => count($selections['jobIds'])
+      ]);
+    }
+    else {
+      return $this->t('No selections');
+    }
   }
 
   /**
@@ -79,31 +83,59 @@ class BulkConfirmForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $selections = $this->tempStore->get($this->helper->getCurrentUser()->id() . ':selection');
-    foreach ($selections['entities'] as $entity) {
-      $job = $this->helper->getJobFromId($entity);
-      if (!empty($job)) {
-        $queue_id = $job->getQueueId();
 
-        $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
-        /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
-        $queue = $queue_storage->load($queue_id);
+    $batch = [
+      'title' => $this->t('Processing "@action_label"', [
+        '@action_label' => $selections['action']->get('label'),
+      ]),
+      'operations' => [],
+      'finished' => [get_class($this), 'batchFinished'],
+    ];
 
-        $queue_backend = $queue->getBackend();
-        if ($queue_backend instanceof Database) {
-          switch ('action') {
-            case 'handle_manually':
-              $this->helper->handleManually($job, $queue_backend);
-              break;
-            case 'retry_job':
-              $this->helper->retryJob($job, $queue_backend);
-              break;
-          }
-        }
+    foreach ($selections['jobIds'] as $jobId) {
+      if (!empty($jobId)) {
+        $batch['operations'][] = [
+          [get_class($this), 'batchProcess'],
+          [$jobId, $selections['action']->id()],
+        ];
       }
     }
+
+    batch_set($batch);
 
     $this->tempStore->delete($this->helper->getCurrentUser()->id() . ':selection');
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
+
+  /**
+   * Batch operation callback.
+   */
+  public static function batchProcess($jobId, $action_id, &$context) {
+    if ($jobId) {
+      // Execute the action.
+      $action = \Drupal::service('plugin.manager.action')->createInstance($action_id);
+      $action->execute($jobId);
+
+      // Track progress.
+      $context['results']['processed'][] = $jobId;
+      $context['message'] = t('Processing @job_id', [
+        '@job_id' => $jobId,
+      ]);
+    }
+  }
+
+  /**
+   * Batch finished callback.
+   */
+  public static function batchFinished($success, $results, $operations) {
+    if ($success) {
+      $count = count($results['processed']);
+      \Drupal::messenger()->addStatus(t('Processed @count items.', ['@count' => $count]));
+    }
+    else {
+      \Drupal::messenger()->addError(t('An error occurred during processing.'));
+    }
+  }
+
 
 }

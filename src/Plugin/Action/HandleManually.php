@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Handle a job manually.
  *
  * @Action(
- *   id = "advancedqueue_queue_handle_manually_action",
+ *   id = "advancedqueue_handle_manually_action",
  *   label = @Translation("Handle manually"),
  *   type = "advancedqueue_queue",
  *   confirm_form_route_name = "os2forms_failed_jobs.bulk_confirm_form"

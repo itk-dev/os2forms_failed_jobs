@@ -166,7 +166,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
       // bulk form is submitted, which can lead to data loss.
       $user_input = $form_state->getUserInput();
       $selected = array_filter($user_input[$this->options['id']]);
-      $entities = [];
+      $jobIds = [];
       $action = $this->actions[$form_state->getValue('action')];
       $count = 0;
 
@@ -178,7 +178,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
         }
 
         $count++;
-        $entities[$bulk_form_key] = $bulk_form_key;
+        $jobIds[$bulk_form_key] = $bulk_form_key;
       }
 
       // If there were entities selected but the action isn't allowed on any of
@@ -190,7 +190,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
       $operation_definition = $action->getPluginDefinition();
       if (!empty($operation_definition['confirm_form_route_name'])) {
         $this->tempStore->set($this->helper->getCurrentUser()->id() . ':selection', [
-          'entities' => $entities,
+          'jobIds' => $jobIds,
           'action' => $action,
         ]);
         $options = [
@@ -200,7 +200,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
       }
       else {
         /** @var \Drupal\system\Entity\Action $action */
-        $action->execute($entities);
+        $action->execute($jobIds);
 
         // Don't display the message unless there are some elements affected and
         // there is no confirmation form.
