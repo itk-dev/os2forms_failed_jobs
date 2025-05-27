@@ -37,6 +37,7 @@ class AdvancedQueueProcessSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents(): array {
     return [
       AdvancedQueueEvents::PRE_PROCESS => 'onQueuePreProcess',
+      AdvancedQueueEvents::POST_PROCESS => 'onQueuePostProcess',
     ];
   }
 
@@ -46,8 +47,16 @@ class AdvancedQueueProcessSubscriber implements EventSubscriberInterface {
    * @param \Drupal\advancedqueue\Event\JobEvent $event
    *   The job that is about to be processed.
    */
-  public function onQueuePreProcess(JobEvent $event) :void {
+  public function onQueuePreProcess(JobEvent $event): void {
     $this->helper->handleJob($event->getJob());
   }
 
+  /**
+   * @param \Drupal\advancedqueue\Event\JobEvent $event
+   *
+   * @return void
+   */
+  public function onQueuePostProcess(JobEvent $event): void {
+    $this->helper->onJobPostProcess($event->getJob());
+  }
 }

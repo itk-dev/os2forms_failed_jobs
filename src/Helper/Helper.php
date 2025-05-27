@@ -99,6 +99,36 @@ class Helper {
   }
 
   /**
+   * Get submission created from job.
+   *
+   * @param string $jobId
+   *   The job id.
+   *
+   * @return int|null
+   *   The created time of a form submission from a job.
+   *
+   * @throws \Exception
+   */
+  public function getSubmissionCreatedFromJob(string $jobId): ?int {
+    try {
+      $submissionId = $this->getSubmissionIdFromJob($jobId);
+      if (empty($submissionId)) {
+        return 0;
+      }
+      $submission = $this->getWebformSubmission($submissionId);
+
+      if (!empty($submission)) {
+        /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+        return $submission->getCreatedTime();
+      }
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
+        ->error($e->getMessage());
+    }
+  }
+
+  /**
    * Get all jobs that match a specific form.
    *
    * @param string $formId
@@ -150,6 +180,18 @@ class Helper {
           ->error(
             'Error adding releation: %message', ['%message' => $e->getMessage()]);
       }
+    }
+
+    // Update processed time.
+    $queue_id = $job->getQueueId();
+
+    $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
+    /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+    $queue = $queue_storage->load($queue_id);
+
+    $queue_backend = $queue->getBackend();
+    if ($queue_backend instanceof Database) {
+      $queue_backend->onFailure($job);
     }
   }
 
@@ -382,7 +424,7 @@ class Helper {
         'sid' => $this->getSubmissionIdFromJob($job->getId()),
         'handler_id' => '',
         'operation' => 'selected for manual handling',
-        'uid' => $this->currentUser->id(),
+        'uid' => $this->getCurrentUser()->id(),
         'message' => $this->t('Submission removed from error log. Selected for manual handling.'),
         'variables' => serialize([]),
         'data' => serialize([]),
@@ -433,6 +475,26 @@ class Helper {
    */
   public function createSubmissionLogEntry(array $fields): void {
     $this->webformSubmissionLogManager->insert($fields);
+  }
+
+  public function onJobPostProcess($job): void {
+    $queue_id = $job->getQueueId();
+
+    $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
+    /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+    $queue = $queue_storage->load($queue_id);
+
+    $queue_backend = $queue->getBackend();
+    if ($job->getState() === 'failure') {
+      $queue_backend->onFailure($job);
+    }
+  }
+
+  /**
+   * @return \Drupal\Core\Session\AccountProxyInterface
+   */
+  public function getCurrentUser() {
+    return $this->currentUser;
   }
 
   /**
