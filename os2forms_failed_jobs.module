@@ -162,7 +162,7 @@ function os2forms_failed_jobs_webform_submission_delete(WebformSubmissionInterfa
  *
  * @phpstan-return array<string, mixed>
  */
-function os2forms_failed_jobs_theme() {
+function os2forms_failed_jobs_theme(): array {
   return [
     'job_type_retry_strategy' => [
       'variables' => [
@@ -176,7 +176,7 @@ function os2forms_failed_jobs_theme() {
 /**
  * Implements hook_advanced_queue_job_type_info_alter().
  */
-function os2forms_failed_jobs_advancedqueue_job_type_info_alter(array &$definitions) {
+function os2forms_failed_jobs_advancedqueue_job_type_info_alter(array &$definitions): void {
   // Default attributes for job type definition for os2forms.
   // This will override the plugin definition defined in the module.
   $defaultAttributes = [

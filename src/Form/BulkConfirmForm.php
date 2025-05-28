@@ -18,8 +18,6 @@ class BulkConfirmForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @phpstan-param array<string, mixed> $configuration
    */
   public function __construct(
     protected PrivateTempStore $tempStore,
@@ -31,7 +29,7 @@ class BulkConfirmForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): BulkConfirmForm {
     return new static(
       $container->get('tempstore.private')->get('os2forms_failed_jobs_bulk_confirmation'),
       $container->get('entity_type.manager'),
@@ -78,7 +76,10 @@ class BulkConfirmForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
-   */
+   *
+   * @phpstan-param array<string, mixed> $form
+   * @phpstan-param array<string, mixed> $form_state
+ */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $selections = $this->tempStore->get($this->helper->getCurrentUser()->id() . ':selection');
 
