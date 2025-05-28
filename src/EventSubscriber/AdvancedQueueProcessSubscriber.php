@@ -57,10 +57,10 @@ class AdvancedQueueProcessSubscriber implements EventSubscriberInterface {
    * Act when advanced queue runs its postprocess event.
    *
    * @param \Drupal\advancedqueue\Event\JobEvent $event
-   *
-   * @return void
+   *   The event.
    */
   public function onQueuePostProcess(JobEvent $event): void {
     $this->helper->onJobPostProcess($event->getJob());
   }
+
 }

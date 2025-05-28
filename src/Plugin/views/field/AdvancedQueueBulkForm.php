@@ -35,7 +35,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
     MessengerInterface $messenger,
     EntityRepositoryInterface $entity_repository,
     protected Helper $helper,
-    protected PrivateTempStore $tempStore
+    protected PrivateTempStore $tempStore,
   ) {
     parent::__construct(
       $configuration,
@@ -157,6 +157,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
    * {@inheritdoc}
    *
    * @phpstan-param array<string, mixed> $form
+   *
    * @throws \Drupal\Core\TempStore\TempStoreException
    */
   public function viewsFormSubmit(&$form, FormStateInterface $form_state): void {

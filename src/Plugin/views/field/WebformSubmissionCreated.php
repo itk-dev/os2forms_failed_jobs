@@ -35,7 +35,6 @@ class WebformSubmissionCreated extends Date {
     DateFormatterInterface $date_formatter,
     EntityStorageInterface $date_format_storage,
     protected Helper $helper,
-
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $date_formatter, $date_format_storage);
   }
@@ -95,9 +94,20 @@ class WebformSubmissionCreated extends Date {
       $value = $this->helper->getSubmissionCreatedFromJob($values->job_id);
     }
 
-    // Lifted from Drupal\views\Plugin\views\field\Date
+    // Lifted from Drupal\views\Plugin\views\field\Date.
     $format = $this->options['date_format'];
-    if (in_array($format, ['custom', 'raw time ago', 'time ago', 'raw time hence', 'time hence', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span'])) {
+    if (in_array($format, [
+      'custom',
+      'raw time ago',
+      'time ago',
+      'raw time hence',
+      'time hence',
+      'raw time span',
+      'time span',
+      'raw time span',
+      'inverse time span',
+      'time span',
+    ])) {
       $custom_format = $this->options['custom_date_format'];
     }
 
@@ -108,26 +118,49 @@ class WebformSubmissionCreated extends Date {
       $time_diff = $this->time->getRequestTime() - $value;
       switch ($format) {
         case 'raw time ago':
-          return $this->dateFormatter->formatTimeDiffSince($value, ['granularity' => is_numeric($custom_format) ? $custom_format : 2]);
+          return $this->dateFormatter->formatTimeDiffSince($value, [
+            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+          ]);
 
         case 'time ago':
-          return $this->t('%time ago', ['%time' => $this->dateFormatter->formatTimeDiffSince($value, ['granularity' => is_numeric($custom_format) ? $custom_format : 2])]);
+          return $this->t('%time ago', [
+            '%time' => $this->dateFormatter->formatTimeDiffSince($value, [
+              'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+            ]),
+          ]);
 
         case 'raw time hence':
-          return $this->dateFormatter->formatTimeDiffUntil($value, ['granularity' => is_numeric($custom_format) ? $custom_format : 2]);
+          return $this->dateFormatter->formatTimeDiffUntil($value, [
+            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+          ]);
 
         case 'time hence':
-          return $this->t('%time hence', ['%time' => $this->dateFormatter->formatTimeDiffUntil($value, ['granularity' => is_numeric($custom_format) ? $custom_format : 2])]);
+          return $this->t('%time hence', [
+            '%time' => $this->dateFormatter->formatTimeDiffUntil($value, [
+              'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+            ]),
+          ]);
 
         case 'raw time span':
-          return ($time_diff < 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, ['strict' => FALSE, 'granularity' => is_numeric($custom_format) ? $custom_format : 2]);
+          return ($time_diff < 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, [
+            'strict' => FALSE,
+            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+          ]);
 
         case 'inverse time span':
-          return ($time_diff > 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, ['strict' => FALSE, 'granularity' => is_numeric($custom_format) ? $custom_format : 2]);
+          return ($time_diff > 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, [
+            'strict' => FALSE,
+            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+          ]);
 
         case 'time span':
-          $time = $this->dateFormatter->formatTimeDiffSince($value, ['strict' => FALSE, 'granularity' => is_numeric($custom_format) ? $custom_format : 2]);
-          return ($time_diff < 0) ? $this->t('%time hence', ['%time' => $time]) : $this->t('%time ago', ['%time' => $time]);
+          $time = $this->dateFormatter->formatTimeDiffSince($value, [
+            'strict' => FALSE,
+            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+          ]);
+          return ($time_diff < 0) ? $this->t('%time hence', [
+            '%time' => $time,
+          ]) : $this->t('%time ago', ['%time' => $time]);
 
         case 'custom':
           if ($custom_format == 'r') {

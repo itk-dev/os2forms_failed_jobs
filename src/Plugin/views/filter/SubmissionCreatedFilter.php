@@ -7,7 +7,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Plugin\views\filter\Date;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Filter by submission created.
@@ -77,4 +76,5 @@ final class SubmissionCreatedFilter extends Date {
 
     $query->addWhere($this->options['group'], $table . '.job_id', $jobs, 'IN');
   }
+
 }

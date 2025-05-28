@@ -195,7 +195,7 @@ function os2forms_failed_jobs_advancedqueue_job_type_info_alter(array &$definiti
     'os2forms_get_organized',
     'os2forms_payment',
     'os2forms_queued_email',
-    'os2web_audit'
+    'os2web_audit',
   ];
 
   foreach ($definitions as $key => $definition) {

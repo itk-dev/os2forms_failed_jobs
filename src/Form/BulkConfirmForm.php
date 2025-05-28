@@ -2,7 +2,6 @@
 
 namespace Drupal\os2forms_failed_jobs\Form;
 
-use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -61,7 +60,6 @@ class BulkConfirmForm extends ConfirmFormBase {
     return $this->t('Continue?');
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -70,7 +68,7 @@ class BulkConfirmForm extends ConfirmFormBase {
     if ($selections) {
       return $this->t('You are about to perform "@action_label" on @count queue errors. Are you sure you want to continue?', [
         '@action_label' => $selections['action']->get('label'),
-        '@count' => count($selections['jobIds'])
+        '@count' => count($selections['jobIds']),
       ]);
     }
     else {
@@ -136,6 +134,5 @@ class BulkConfirmForm extends ConfirmFormBase {
       \Drupal::messenger()->addError(t('An error occurred during processing.'));
     }
   }
-
 
 }

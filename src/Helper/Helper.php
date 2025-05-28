@@ -259,11 +259,12 @@ class Helper {
   }
 
   /**
-   * Determine if the submission that created the job was submitted between two
-   * DateTime objects.
+   * Determine if a job was submitted between two Drupal DateTime objects.
    *
    * @param string $jobId
    *   The id of a queue job.
+   * @param array $input
+   *   The input from a form filter.
    *
    * @return bool
    *   True if date is between two DateTime objects or if no input was given.
@@ -516,23 +517,38 @@ class Helper {
     $this->webformSubmissionLogManager->insert($fields);
   }
 
-  public function onJobPostProcess($job): void {
-    $queue_id = $job->getQueueId();
+  /**
+   * Act after a job was processed.
+   *
+   * @param \Drupal\advancedqueue\Job $job
+   *   The job.
+   */
+  public function onJobPostProcess(Job $job): void {
+    try {
+      $queue_id = $job->getQueueId();
 
-    $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
-    /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
-    $queue = $queue_storage->load($queue_id);
+      $queue_storage = $this->entityTypeManager->getStorage('advancedqueue_queue');
+      /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+      $queue = $queue_storage->load($queue_id);
 
-    $queue_backend = $queue->getBackend();
-    if ($job->getState() === 'failure') {
-      $queue_backend->onFailure($job);
+      $queue_backend = $queue->getBackend();
+      if ($job->getState() === 'failure') {
+        $queue_backend->onFailure($job);
+      }
+    }
+    catch (\Exception $e) {
+      $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
+        ->error($e->getMessage());
     }
   }
 
   /**
+   * Get the current user.
+   *
    * @return \Drupal\Core\Session\AccountProxyInterface
+   *   The user account.
    */
-  public function getCurrentUser() {
+  public function getCurrentUser(): AccountProxyInterface {
     return $this->currentUser;
   }
 
