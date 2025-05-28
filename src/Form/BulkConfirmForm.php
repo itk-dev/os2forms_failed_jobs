@@ -107,9 +107,16 @@ class BulkConfirmForm extends ConfirmFormBase {
   }
 
   /**
-   * Batch operation callback.
+   * Define batch.
+   *
+   * @param int $jobId
+   *   The job id.
+   * @param string $action_id
+   *   The action.
+   * @param $context
+   *   The batchs context.
    */
-  public static function batchProcess($jobId, $action_id, &$context) {
+  public static function batchProcess(int $jobId, $action_id, &$context) {
     if ($jobId) {
       // Execute the action.
       $action = \Drupal::service('plugin.manager.action')->createInstance($action_id);
@@ -125,8 +132,17 @@ class BulkConfirmForm extends ConfirmFormBase {
 
   /**
    * Batch finished callback.
+   *
+   * @param bool $success
+   *   Whether the batch processing was successful.
+   * @param array<string, mixed> $results
+   *   The results of the process.
+   * @param array<string, mixed> $operations
+   *   The operations.
+   *
+   * @return void
    */
-  public static function batchFinished($success, $results, $operations) {
+  public static function batchFinished(bool $success, array $results, array $operations) {
     if ($success) {
       $count = count($results['processed']);
       \Drupal::messenger()->addStatus(t('Processed @count items.', ['@count' => $count]));
