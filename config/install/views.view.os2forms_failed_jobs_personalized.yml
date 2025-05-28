@@ -21,7 +21,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'Failed jobs on my forms'
+      title: 'Fejlede kø job på mine formularer'
       fields:
         job_id:
           id: job_id
@@ -181,7 +181,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: advancedqueue_job_webform_id
-          label: 'Webform id'
+          label: 'Formular id'
           exclude: true
           alter:
             alter_text: false
@@ -230,7 +230,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: advancedqueue_job_webform_submission_id
-          label: 'Webform submission id'
+          label: 'Formularbesvarelse id'
           exclude: true
           alter:
             alter_text: false
@@ -328,7 +328,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: advancedqueue_job_webform_submission_serial_id
-          label: 'Webform submission serial id'
+          label: 'Formularbesvarelse seriel id'
           exclude: true
           alter:
             alter_text: false
@@ -529,7 +529,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: advancedqueue_job_webform_label
-          label: Webform
+          label: Formular
           exclude: false
           alter:
             alter_text: true
@@ -578,7 +578,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: custom
-          label: 'Site wide id / Webform submission id'
+          label: 'Formularbesvarelse id tværgående / Formularbesvarelse id'
           exclude: false
           alter:
             alter_text: true
@@ -627,7 +627,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: custom
-          label: 'Related handler / Error message'
+          label: 'Relateret handler / Fejlbesked'
           exclude: false
           alter:
             alter_text: true
@@ -668,15 +668,15 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: false
-        processed:
-          id: processed
+        webform_submission_created:
+          id: webform_submission_created
           table: advancedqueue
-          field: processed
+          field: webform_submission_created
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: date
-          label: 'Last processed date'
+          plugin_id: advancedqueue_job_submission_created
+          label: Indsendelsestidspunkt
           exclude: false
           alter:
             alter_text: false
@@ -717,8 +717,60 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          date_format: medium
-          custom_date_format: ''
+          date_format: custom
+          custom_date_format: 'Y-m-d H:i:s'
+          timezone: ''
+        processed:
+          id: processed
+          table: advancedqueue
+          field: processed
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: date
+          label: 'Seneste processeringstidspunkt'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          date_format: custom
+          custom_date_format: 'Y-m-d H:i:s'
           timezone: ''
         state:
           id: state
@@ -728,7 +780,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: advancedqueue_job_state
-          label: State
+          label: Tilstand
           exclude: false
           alter:
             alter_text: false
@@ -778,7 +830,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: numeric
-          label: 'Retry status'
+          label: Gentagelsesstatus
           exclude: false
           alter:
             alter_text: true
@@ -835,7 +887,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: advancedqueue_job_queue_operations
-          label: 'Queue operations'
+          label: Handlinger
           exclude: false
           alter:
             alter_text: false
@@ -1072,64 +1124,13 @@ display:
           exposed: true
           expose:
             operator_id: webform_label_filter_op
-            label: Webform
+            label: Formular
             description: ''
             use_operator: false
             operator: webform_label_filter_op
             operator_limit_selection: false
             operator_list: {  }
             identifier: webform_label_filter
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_admin: '0'
-              flow_designer: '0'
-              forloeb_designer: '0'
-              sagsbehandler: '0'
-              medarbejder: '0'
-              leder: '0'
-              virksomhed: '0'
-              borger: '0'
-              os2forms_rest_api_user: '0'
-              os2forms_rest_api_user_write: '0'
-            placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-        webform_submission_serial_id:
-          id: webform_submission_serial_id
-          table: advancedqueue
-          field: webform_submission_serial_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: advancedqueue_job_submission_serial
-          operator: '='
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: webform_submission_serial_id_op
-            label: 'Webform submission id'
-            description: ''
-            use_operator: false
-            operator: webform_submission_serial_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: webform_submission_serial_id
             required: false
             remember: false
             multiple: false
@@ -1234,7 +1235,7 @@ display:
           exposed: true
           expose:
             operator_id: state_1_op
-            label: State
+            label: Tilstand
             description: ''
             use_operator: false
             operator: state_1_op
@@ -1259,6 +1260,63 @@ display:
               os2forms_rest_api_user: '0'
               os2forms_rest_api_user_write: '0'
             reduce: true
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        webform_submission_created_1:
+          id: webform_submission_created_1
+          table: advancedqueue
+          field: webform_submission_created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: advancedqueue_job_submission_created
+          operator: between
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: webform_submission_created_1_op
+            label: 'Indsendelsestidspunkt (Fra - Til)'
+            description: ''
+            use_operator: false
+            operator: webform_submission_created_1_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: webform_submission_created_1
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_admin: '0'
+              flow_designer: '0'
+              forloeb_designer: '0'
+              sagsbehandler: '0'
+              medarbejder: '0'
+              leder: '0'
+              virksomhed: '0'
+              borger: '0'
+              os2forms_rest_api_user: '0'
+              os2forms_rest_api_user_write: '0'
+            min_placeholder: null
+            max_placeholder: null
+            placeholder: null
           is_grouped: false
           group_info:
             label: ''
