@@ -181,8 +181,8 @@ function os2forms_failed_jobs_advancedqueue_job_type_info_alter(array &$definiti
   // This will override the plugin definition defined in the module.
   $defaultAttributes = [
     'max_retries' => 5,
-    'retry_delay' => 600,
-    'retry_multiplier' => 32,
+    'retry_delay' => 120,
+    'retry_multiplier' => 5,
   ];
 
   // List of jobtypes that should use the os2forms default job type definition.

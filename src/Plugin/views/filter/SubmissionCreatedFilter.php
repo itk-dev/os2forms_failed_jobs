@@ -5,8 +5,9 @@ namespace Drupal\os2forms_failed_jobs\Plugin\views\filter;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
-use Drupal\views\Plugin\views\filter\StringFilter;
+use Drupal\views\Plugin\views\filter\Date;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Filter by submission created.
@@ -15,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ViewsFilter("advancedqueue_job_submission_created")
  */
-final class SubmissionCreatedFilter extends StringFilter {
+final class SubmissionCreatedFilter extends Date {
 
   /**
    * Class constructor.
@@ -26,11 +27,11 @@ final class SubmissionCreatedFilter extends StringFilter {
     $configuration,
     $plugin_id,
     $plugin_definition,
-    Connection $connection,
+    protected Connection $connection,
     protected Helper $helper,
     protected RouteMatchInterface $routeMatch,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $connection);
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
@@ -59,18 +60,21 @@ final class SubmissionCreatedFilter extends StringFilter {
     $query = $this->query;
     $table = array_key_first($query->tables);
 
+    $existsQuery = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
+    $existsQuery->fields('o', ['job_id']);
+    $jobIds = $existsQuery->execute()->fetchCol();
     $input = $this->value;
-    $webform = $this->routeMatch->getParameter('webform');
 
-    if ($webform) {
-      $jobs = $this->helper->getQueueJobIdsFromSerial($input, $webform->get('id'));
-      if (empty($jobs)) {
-        // The 'IN' operator requires a non empty array.
-        $jobs = [0];
+    foreach ($jobIds as $job) {
+      if ($this->helper->submissionInCreatedFilterRange($job, $input) > 0) {
+        $jobs[] = $job;
       }
-
-      $query->addWhere($this->options['group'], $table . '.job_id', $jobs, 'IN');
     }
-  }
+    if (empty($jobs)) {
+      // The 'IN' operator requires a non empty array.
+      $jobs = [0];
+    }
 
+    $query->addWhere($this->options['group'], $table . '.job_id', $jobs, 'IN');
+  }
 }

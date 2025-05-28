@@ -259,6 +259,45 @@ class Helper {
   }
 
   /**
+   * Determine if the submission that created the job was submitted between two
+   * DateTime objects.
+   *
+   * @param string $jobId
+   *   The id of a queue job.
+   *
+   * @return bool
+   *   True if date is between two DateTime objects or if no input was given.
+   *
+   * @throws \Exception
+   */
+  public function submissionInCreatedFilterRange(string $jobId, $input): bool {
+    try {
+      $submissionId = $this->getSubmissionIdFromJob($jobId);
+      if (empty($submissionId)) {
+        return 0;
+      }
+      /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+      $submission = $this->getWebformSubmission($submissionId);
+      $created = $submission->getCreatedTime();
+
+      if (!empty($submission) && !empty($input['min']) && !empty($input['max'])) {
+        /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+        $created = (new DrupalDateTime())->createFromTimestamp($created);
+        if ($input['min'] <= $created  && $created <= $input['max']) {
+          return TRUE;
+        }
+        return FALSE;
+      }
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
+        ->error($e->getMessage());
+    }
+
+    return TRUE;
+  }
+
+  /**
    * Given a submission id get all matching jobs from advanced queue table.
    *
    * @param string $submissionId
