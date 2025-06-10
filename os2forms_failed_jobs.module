@@ -189,7 +189,7 @@ function os2forms_failed_jobs_advancedqueue_job_type_info_alter(array &$definiti
   $useDefault = [
     'os2forms_api_request_handler',
     'os2forms_digital_post',
-    'os2forms_fasit',
+    'fasit_queue',
     'os2forms_fbs_handler',
     'os2forms_forloeb',
     'os2forms_get_organized',

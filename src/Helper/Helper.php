@@ -279,10 +279,9 @@ class Helper {
       }
       /** @var \Drupal\webform\WebformSubmissionInterface $submission */
       $submission = $this->getWebformSubmission($submissionId);
-      $created = $submission->getCreatedTime();
 
       if (!empty($submission) && !empty($input['min']) && !empty($input['max'])) {
-        /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+        $created = $submission->getCreatedTime();
         $created = (new DrupalDateTime())->createFromTimestamp($created);
         if ($input['min'] <= $created  && $created <= $input['max']) {
           return TRUE;
