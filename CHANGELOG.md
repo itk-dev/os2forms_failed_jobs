@@ -4,6 +4,16 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 
 ## [Under udvikling]
 
+## [1.7.0] 2025-05-02
+
+* Updaterer minimal php version
+* Tilføj peronaliseret view til error log
+* Tilføj nye fields til advanced queue views
+* Tilføj nye filtre til advanced queue views
+* Tilføj side til "Mine form fejl"
+* Tilføj manuel håndtering af fejlede jobs.
+* Ændre retry håndtering
+
 ## [1.6.0] 2025-03-11
 
 * Tillod jobs uden relation til indsendelser at blive genkørt.

@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\TempStore\PrivateTempStore;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\field\BulkForm;
@@ -34,6 +35,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
     MessengerInterface $messenger,
     EntityRepositoryInterface $entity_repository,
     protected Helper $helper,
+    protected PrivateTempStore $tempStore,
   ) {
     parent::__construct(
       $configuration,
@@ -61,6 +63,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
       $container->get('messenger'),
       $container->get('entity.repository'),
       $container->get(Helper::class),
+      $container->get('tempstore.private')->get('os2forms_failed_jobs_bulk_confirmation')
     );
   }
 
@@ -154,6 +157,9 @@ final class AdvancedQueueBulkForm extends BulkForm {
    * {@inheritdoc}
    *
    * @phpstan-param array<string, mixed> $form
+   *
+   * @throws \Drupal\Core\TempStore\TempStoreException
+   * @throws \Exception
    */
   public function viewsFormSubmit(&$form, FormStateInterface $form_state): void {
     if ($form_state->get('step') == 'views_form_views_form') {
@@ -162,7 +168,8 @@ final class AdvancedQueueBulkForm extends BulkForm {
       // bulk form is submitted, which can lead to data loss.
       $user_input = $form_state->getUserInput();
       $selected = array_filter($user_input[$this->options['id']]);
-      $entities = [];
+      $jobIds = [];
+      /** @var \Drupal\system\Entity\Action $action */
       $action = $this->actions[$form_state->getValue('action')];
       $count = 0;
 
@@ -172,17 +179,9 @@ final class AdvancedQueueBulkForm extends BulkForm {
         if (empty($job)) {
           return;
         }
-        if ('failure' !== $job->getState()) {
-          $this->messenger->addError($this->t('Element with webform submission id: @webform_submit_id already has state: @state', [
-            '@webform_submit_id' => $this->helper->getSubmissionSerialIdFromJob($bulk_form_key),
-            '@state' => $job->getState(),
-          ]));
-          continue;
-        }
 
         $count++;
-
-        $entities[$bulk_form_key] = $bulk_form_key;
+        $jobIds[$bulk_form_key] = $bulk_form_key;
       }
 
       // If there were entities selected but the action isn't allowed on any of
@@ -191,17 +190,21 @@ final class AdvancedQueueBulkForm extends BulkForm {
         return;
       }
 
-      /** @var \Drupal\system\Entity\Action $action */
-      $action->execute($entities);
-
       $operation_definition = $action->getPluginDefinition();
       if (!empty($operation_definition['confirm_form_route_name'])) {
+        $this->tempStore->set($this->helper->getCurrentUser()->id() . ':selection', [
+          'jobIds' => $jobIds,
+          'action' => $action,
+        ]);
         $options = [
           'query' => $this->getDestinationArray(),
         ];
         $form_state->setRedirect($operation_definition['confirm_form_route_name'], [], $options);
       }
       else {
+        /** @var \Drupal\system\Entity\Action $action */
+        $action->execute($jobIds);
+
         // Don't display the message unless there are some elements affected and
         // there is no confirmation form.
         $this->messenger->addStatus($this->formatPlural($count, '%action was applied to @count item.', '%action was applied to @count items.', [

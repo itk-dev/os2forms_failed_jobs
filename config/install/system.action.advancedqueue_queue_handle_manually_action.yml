@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - os2forms_failed_jobs
+  enforced:
+    module:
+      - os2forms_failed_jobs
+id: advancedqueue_handle_manually_action
+label: 'Handle manually'
+type: advancedqueue_queue
+plugin: advancedqueue_handle_manually_action
+configuration: {  }
