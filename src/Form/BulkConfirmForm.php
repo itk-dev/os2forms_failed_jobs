@@ -2,6 +2,7 @@
 
 namespace Drupal\os2forms_failed_jobs\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -9,7 +10,6 @@ use Drupal\Core\TempStore\PrivateTempStore;
 use Drupal\Core\Url;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Confirmation form for bulk actions action.
@@ -78,8 +78,7 @@ class BulkConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    *
    * @phpstan-param array<string, mixed> $form
-   * @phpstan-param array<string, mixed> $form_state
- */
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $selections = $this->tempStore->get($this->helper->getCurrentUser()->id() . ':selection');
 
@@ -113,10 +112,10 @@ class BulkConfirmForm extends ConfirmFormBase {
    *   The job id.
    * @param string $action_id
    *   The action.
-   * @param $context
-   *   The batchs context.
+   * @param mixed $context
+   *   The batch context.
    */
-  public static function batchProcess(int $jobId, $action_id, &$context) {
+  public static function batchProcess(int $jobId, $action_id, &$context): void {
     if ($jobId) {
       // Execute the action.
       $action = \Drupal::service('plugin.manager.action')->createInstance($action_id);
@@ -139,10 +138,8 @@ class BulkConfirmForm extends ConfirmFormBase {
    *   The results of the process.
    * @param array<string, mixed> $operations
    *   The operations.
-   *
-   * @return void
    */
-  public static function batchFinished(bool $success, array $results, array $operations) {
+  public static function batchFinished(bool $success, array $results, array $operations): void {
     if ($success) {
       $count = count($results['processed']);
       \Drupal::messenger()->addStatus(t('Processed @count items.', ['@count' => $count]));

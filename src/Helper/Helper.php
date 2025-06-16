@@ -10,13 +10,13 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\advancedqueue\Job;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\advancedqueue\Job;
+use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform_submission_log\WebformSubmissionLogManagerInterface;
-use Drupal\advancedqueue\Plugin\AdvancedQueue\Backend\Database;
 
 /**
  * Helper for managing failed jobs.
@@ -126,6 +126,8 @@ class Helper {
       $this->loggerFactory->get('os2forms_failed_jobs_queue_submission_relation')
         ->error($e->getMessage());
     }
+
+    return 0;
   }
 
   /**
@@ -269,18 +271,20 @@ class Helper {
    * @return bool
    *   True if date is between two DateTime objects or if no input was given.
    *
+   * @phpstan-param array<string, mixed> $input
+   *
    * @throws \Exception
    */
-  public function submissionInCreatedFilterRange(string $jobId, $input): bool {
+  public function submissionInCreatedFilterRange(string $jobId, array $input): bool {
     try {
       $submissionId = $this->getSubmissionIdFromJob($jobId);
       if (empty($submissionId)) {
-        return 0;
+        return FALSE;
       }
-      /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+      /** @var \Drupal\webform\WebformSubmissionInterface|null $submission */
       $submission = $this->getWebformSubmission($submissionId);
 
-      if (!empty($submission) && !empty($input['min']) && !empty($input['max'])) {
+      if ($submission && !empty($input['min']) && !empty($input['max'])) {
         $created = $submission->getCreatedTime();
         $created = (new DrupalDateTime())->createFromTimestamp($created);
         if ($input['min'] <= $created  && $created <= $input['max']) {

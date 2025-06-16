@@ -159,6 +159,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
    * @phpstan-param array<string, mixed> $form
    *
    * @throws \Drupal\Core\TempStore\TempStoreException
+   * @throws \Exception
    */
   public function viewsFormSubmit(&$form, FormStateInterface $form_state): void {
     if ($form_state->get('step') == 'views_form_views_form') {
@@ -168,6 +169,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
       $user_input = $form_state->getUserInput();
       $selected = array_filter($user_input[$this->options['id']]);
       $jobIds = [];
+      /** @var \Drupal\system\Entity\Action $action */
       $action = $this->actions[$form_state->getValue('action')];
       $count = 0;
 

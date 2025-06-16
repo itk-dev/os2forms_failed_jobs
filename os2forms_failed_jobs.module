@@ -175,6 +175,8 @@ function os2forms_failed_jobs_theme(): array {
 
 /**
  * Implements hook_advanced_queue_job_type_info_alter().
+ *
+ * @phpstan-param array<string, mixed> $definitions
  */
 function os2forms_failed_jobs_advancedqueue_job_type_info_alter(array &$definitions): void {
   // Default attributes for job type definition for os2forms.
