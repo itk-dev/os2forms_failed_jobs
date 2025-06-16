@@ -91,87 +91,87 @@ class WebformSubmissionCreated extends Date {
    */
   public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
 
-    $value = isset($values->job_id) ? $this->helper->getSubmissionCreatedFromJob($values->job_id) : null;
+    $value = isset($values->job_id) ? $this->helper->getSubmissionCreatedFromJob($values->job_id) : NULL;
 
     if (is_null($value)) {
-        return '';
+      return '';
     }
 
     // Lifted from Drupal\views\Plugin\views\field\Date.
     $format = $this->options['date_format'];
 
     $custom_format = in_array($format, [
-        'custom',
-        'raw time ago',
-        'time ago',
-        'raw time hence',
-        'time hence',
-        'raw time span',
-        'time span',
-        'raw time span',
-        'inverse time span',
-        'time span',
-    ]) ? $this->options['custom_date_format'] : null;
+      'custom',
+      'raw time ago',
+      'time ago',
+      'raw time hence',
+      'time hence',
+      'raw time span',
+      'time span',
+      'raw time span',
+      'inverse time span',
+      'time span',
+    ]) ? $this->options['custom_date_format'] : NULL;
 
-      $timezone = !empty($this->options['timezone']) ? $this->options['timezone'] : NULL;
-      // Will be positive for a datetime in the past (ago), and negative for a
-      // datetime in the future (hence).
-      $time_diff = $this->time->getRequestTime() - $value;
-      switch ($format) {
-        case 'raw time ago':
-          return $this->dateFormatter->formatTimeDiffSince($value, [
+    $timezone = !empty($this->options['timezone']) ? $this->options['timezone'] : NULL;
+    // Will be positive for a datetime in the past (ago), and negative for a
+    // datetime in the future (hence).
+    $time_diff = $this->time->getRequestTime() - $value;
+    switch ($format) {
+      case 'raw time ago':
+        return $this->dateFormatter->formatTimeDiffSince($value, [
+          'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+        ]);
+
+      case 'time ago':
+        return $this->t('%time ago', [
+          '%time' => $this->dateFormatter->formatTimeDiffSince($value, [
             'granularity' => is_numeric($custom_format) ? $custom_format : 2,
-          ]);
+          ]),
+        ]);
 
-        case 'time ago':
-          return $this->t('%time ago', [
-            '%time' => $this->dateFormatter->formatTimeDiffSince($value, [
-              'granularity' => is_numeric($custom_format) ? $custom_format : 2,
-            ]),
-          ]);
+      case 'raw time hence':
+        return $this->dateFormatter->formatTimeDiffUntil($value, [
+          'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+        ]);
 
-        case 'raw time hence':
-          return $this->dateFormatter->formatTimeDiffUntil($value, [
+      case 'time hence':
+        return $this->t('%time hence', [
+          '%time' => $this->dateFormatter->formatTimeDiffUntil($value, [
             'granularity' => is_numeric($custom_format) ? $custom_format : 2,
-          ]);
+          ]),
+        ]);
 
-        case 'time hence':
-          return $this->t('%time hence', [
-            '%time' => $this->dateFormatter->formatTimeDiffUntil($value, [
-              'granularity' => is_numeric($custom_format) ? $custom_format : 2,
-            ]),
-          ]);
+      case 'raw time span':
+        return ($time_diff < 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, [
+          'strict' => FALSE,
+          'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+        ]);
 
-        case 'raw time span':
-          return ($time_diff < 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, [
-            'strict' => FALSE,
-            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
-          ]);
+      case 'inverse time span':
+        return ($time_diff > 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, [
+          'strict' => FALSE,
+          'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+        ]);
 
-        case 'inverse time span':
-          return ($time_diff > 0 ? '-' : '') . $this->dateFormatter->formatTimeDiffSince($value, [
-            'strict' => FALSE,
-            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
-          ]);
+      case 'time span':
+        $time = $this->dateFormatter->formatTimeDiffSince($value, [
+          'strict' => FALSE,
+          'granularity' => is_numeric($custom_format) ? $custom_format : 2,
+        ]);
+        return ($time_diff < 0) ? $this->t('%time hence', [
+          '%time' => $time,
+        ]) : $this->t('%time ago', ['%time' => $time]);
 
-        case 'time span':
-          $time = $this->dateFormatter->formatTimeDiffSince($value, [
-            'strict' => FALSE,
-            'granularity' => is_numeric($custom_format) ? $custom_format : 2,
-          ]);
-          return ($time_diff < 0) ? $this->t('%time hence', [
-            '%time' => $time,
-          ]) : $this->t('%time ago', ['%time' => $time]);
+      case 'custom':
+        if ($custom_format == 'r') {
+          return $this->dateFormatter->format($value, $format, $custom_format, $timezone, 'en');
+        }
+        return $this->dateFormatter->format($value, $format, $custom_format, $timezone);
 
-        case 'custom':
-          if ($custom_format == 'r') {
-            return $this->dateFormatter->format($value, $format, $custom_format, $timezone, 'en');
-          }
-          return $this->dateFormatter->format($value, $format, $custom_format, $timezone);
-
-        default:
-          return $this->dateFormatter->format($value, $format, '', $timezone);
-      }
+      default:
+        return $this->dateFormatter->format($value, $format, '', $timezone);
+    }
   }
 
 }

@@ -153,14 +153,14 @@ final class AdvancedQueueBulkForm extends BulkForm {
     }
   }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @phpstan-param array<string, mixed> $form
-     *
-     * @throws \Drupal\Core\TempStore\TempStoreException
-     * @throws \Exception
-     */
+  /**
+   * {@inheritdoc}
+   *
+   * @phpstan-param array<string, mixed> $form
+   *
+   * @throws \Drupal\Core\TempStore\TempStoreException
+   * @throws \Exception
+   */
   public function viewsFormSubmit(&$form, FormStateInterface $form_state): void {
     if ($form_state->get('step') == 'views_form_views_form') {
       // Filter only selected checkboxes. Use the actual user input rather than

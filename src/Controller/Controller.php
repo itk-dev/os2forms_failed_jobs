@@ -2,11 +2,11 @@
 
 namespace Drupal\os2forms_failed_jobs\Controller;
 
-use Drupal\advancedqueue\JobTypeManager;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\advancedqueue\JobTypeManager;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;

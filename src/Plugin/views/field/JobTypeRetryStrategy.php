@@ -2,8 +2,8 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 
-use Drupal\advancedqueue\JobTypeManager;
 use Drupal\Component\Render\MarkupInterface;
+use Drupal\advancedqueue\JobTypeManager;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Render\ViewsRenderPipelineMarkup;
 use Drupal\views\ResultRow;
