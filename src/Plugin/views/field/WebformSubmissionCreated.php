@@ -90,28 +90,29 @@ class WebformSubmissionCreated extends Date {
    * @throws \Exception
    */
   public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
-    if (isset($values->job_id)) {
-      $value = $this->helper->getSubmissionCreatedFromJob($values->job_id);
+
+    $value = isset($values->job_id) ? $this->helper->getSubmissionCreatedFromJob($values->job_id) : null;
+
+    if (is_null($value)) {
+        return '';
     }
 
     // Lifted from Drupal\views\Plugin\views\field\Date.
     $format = $this->options['date_format'];
-    if (in_array($format, [
-      'custom',
-      'raw time ago',
-      'time ago',
-      'raw time hence',
-      'time hence',
-      'raw time span',
-      'time span',
-      'raw time span',
-      'inverse time span',
-      'time span',
-    ])) {
-      $custom_format = $this->options['custom_date_format'];
-    }
 
-    if ($value) {
+    $custom_format = in_array($format, [
+        'custom',
+        'raw time ago',
+        'time ago',
+        'raw time hence',
+        'time hence',
+        'raw time span',
+        'time span',
+        'raw time span',
+        'inverse time span',
+        'time span',
+    ]) ? $this->options['custom_date_format'] : null;
+
       $timezone = !empty($this->options['timezone']) ? $this->options['timezone'] : NULL;
       // Will be positive for a datetime in the past (ago), and negative for a
       // datetime in the future (hence).
@@ -171,7 +172,6 @@ class WebformSubmissionCreated extends Date {
         default:
           return $this->dateFormatter->format($value, $format, '', $timezone);
       }
-    }
   }
 
 }
