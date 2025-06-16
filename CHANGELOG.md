@@ -33,7 +33,8 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 * Oprydning i relation køen efter slettede submisisons
 * Tilføjelse af CHANGELOG.md
 
-[Under udvikling]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.6.0...HEAD
+[Under udvikling]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.7.0...HEAD
+[1.7.0]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.6.0...1.7.0
 [1.6.0]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.5.1...1.6.0
 [1.5.1]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.4.0...1.5.0
