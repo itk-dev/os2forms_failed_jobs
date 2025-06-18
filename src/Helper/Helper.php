@@ -650,4 +650,24 @@ class Helper {
     }
   }
 
+
+  /**
+   * Get all webforms with update access.
+   *
+   * @phpstan-return array<int, mixed>
+   *
+   * @throws \Exception
+   */
+  public function getAllWebformsWithUpdateAccess(): array {
+    $webforms = [];
+
+    foreach ($this->entityTypeManager->getStorage('webform')->loadMultiple() as $webform) {
+      if ($webform->access('update')) {
+        $webforms[] = $webform->id();
+      }
+    }
+
+    return $webforms;
+  }
+
 }
