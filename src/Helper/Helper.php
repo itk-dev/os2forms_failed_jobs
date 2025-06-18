@@ -650,7 +650,6 @@ class Helper {
     }
   }
 
-
   /**
    * Get all webforms with update access.
    *
