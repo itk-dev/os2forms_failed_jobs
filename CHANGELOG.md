@@ -4,9 +4,12 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 
 ## [Under udvikling]
 
+
+## [1.7.1] 2025-06-19
+
 * Optimerede database forespørgsler i personalized view'et.
 
-## [1.7.0] 2025-05-02
+## [1.7.0] 2025-06-16
 
 * Updaterer minimal php version
 * Tilføj peronaliseret view til error log
@@ -35,7 +38,8 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 * Oprydning i relation køen efter slettede submisisons
 * Tilføjelse af CHANGELOG.md
 
-[Under udvikling]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.7.0...HEAD
+[Under udvikling]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.7.1...HEAD
+[1.7.1]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.6.0...1.7.0
 [1.6.0]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.5.1...1.6.0
 [1.5.1]: https://github.com/itk-dev/os2forms_failed_jobs/compare/1.5.0...1.5.1
