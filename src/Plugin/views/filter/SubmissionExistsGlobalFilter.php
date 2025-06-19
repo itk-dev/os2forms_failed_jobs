@@ -59,21 +59,15 @@ final class SubmissionExistsGlobalFilter extends StringFilter {
     $query = $this->query;
     $table = array_key_first($query->tables);
 
-    $existsQuery = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'o');
-    $existsQuery->fields('o', ['job_id']);
-    $jobIds = $existsQuery->execute()->fetchCol();
+    $webformSubQuery = $this->connection->select('webform', 'w')
+      ->fields('w', ['webform_id'])
+      ->condition('w.webform_id', $this->helper->getAllWebformsWithUpdateAccess(), 'IN');
 
-    foreach ($jobIds as $job) {
-      if ($this->helper->getSubmissionSerialIdFromJob($job) > 0) {
-        $jobs[] = $job;
-      }
-    }
-    if (empty($jobs)) {
-      // The 'IN' operator requires a non empty array.
-      $jobs = [0];
-    }
+    $jobIdsSubQuery = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'r')
+      ->fields('r', ['job_id'])
+      ->condition('r.webform_id', $webformSubQuery, 'IN');
 
-    $query->addWhere($this->options['group'], $table . '.job_id', $jobs, 'IN');
+    $query->addWhere($this->options['group'], $table . '.job_id', $jobIdsSubQuery, 'IN');
   }
 
 }

@@ -105,19 +105,8 @@ final class Controller extends ControllerBase {
    * @phpstan-return array<string, mixed>
    */
   public function myFormErrors(): array {
-    $webforms = $this->entityTypeManager->getStorage('webform')->loadMultiple();
-    $jobIds = [];
-    foreach ($webforms as $webform) {
-      if ($webform->access('update')) {
-        $formJobIds = $this->helper->getQueueJobIds($webform->id());
-        array_push($jobIds, ...$formJobIds);
-      }
-    }
-
-    $jobIds = array_unique($jobIds);
     $view = Views::getView('os2forms_failed_jobs_personalized');
     $view->setDisplay('block_1');
-    $view->setArguments([implode(',', $jobIds)]);
 
     $view->execute();
     $renderedView = $view->render() ?? ['#markup' => $this->t('No failed jobs')];

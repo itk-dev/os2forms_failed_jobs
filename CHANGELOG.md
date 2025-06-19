@@ -4,6 +4,8 @@ Nedenfor ses dato for release og beskrivelse af opgaver som er implementeret.
 
 ## [Under udvikling]
 
+* Optimerede database forespørgsler i personalized view'et.
+
 ## [1.7.0] 2025-05-02
 
 * Updaterer minimal php version
