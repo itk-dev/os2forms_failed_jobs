@@ -59,11 +59,11 @@ final class SubmissionExistsGlobalFilter extends StringFilter {
     $query = $this->query;
     $table = array_key_first($query->tables);
 
-    $webformSubQuery = \Drupal::database()->select('webform', 'w')
+    $webformSubQuery = $this->connection->select('webform', 'w')
       ->fields('w', ['webform_id'])
       ->condition('w.webform_id', $this->helper->getAllWebformsWithUpdateAccess(), 'IN');
 
-    $jobIdsSubQuery = \Drupal::database()->select('os2forms_failed_jobs_queue_submission_relation', 'r')
+    $jobIdsSubQuery = $this->connection->select('os2forms_failed_jobs_queue_submission_relation', 'r')
       ->fields('r', ['job_id'])
       ->condition('r.webform_id', $webformSubQuery, 'IN');
 
