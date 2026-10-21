@@ -1,58 +1,62 @@
 {
     "name": "itk-dev/os2forms_failed_jobs",
     "description": "Provides list of failed jobs to each form.",
-    "type": "drupal-module",
     "license": "MIT",
+    "type": "drupal-module",
     "authors": [
         {
             "name": "Martin Yde Granath",
             "email": "my@aarhus.dk"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "require": {
+        "php": "^8.3",
+        "drupal/advancedqueue": "^1.0",
+        "drupal/webform": "^6.0",
+        "drush/drush": "^11 || ^12 || ^13"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "drupal/coder": "^8.3",
+        "ergebnis/composer-normalize": "^2.47",
+        "mglaman/phpstan-drupal": "^2.0",
+        "palantirnet/drupal-rector": "^1.0"
+    },
     "repositories": [
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
     ],
-    "require": {
-        "php": "^8.3",
-        "drupal/advancedqueue": "^1.0",
-        "drush/drush": "^11 || ^12",
-        "drupal/webform": "^6.0"
-    },
-    "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
-        "drupal/coder": "^8.3",
-        "mglaman/drupal-check": "^1.4",
-        "mglaman/phpstan-drupal": "~1.2.0"
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-composer-scaffold": true,
+            "ergebnis/composer-normalize": true,
+            "symfony/runtime": true
+        },
+        "sort-packages": true
     },
     "scripts": {
-        "code-analysis/drupal-check": [
-            "vendor/bin/drupal-check --deprecations --analysis --exclude-dir='vendor' *.* src"
-        ],
         "code-analysis": [
             "@code-analysis/drupal-check"
         ],
-        "coding-standards-check/phpcs": [
-            "vendor/bin/phpcs --standard=phpcs.xml.dist"
+        "code-analysis/drupal-check": [
+            "vendor/bin/drupal-check --deprecations --analysis --exclude-dir='vendor' *.* src"
         ],
-        "coding-standards-check": [
-            "@coding-standards-check/phpcs"
+        "coding-standards-apply": [
+            "@coding-standards-apply/phpcs"
         ],
         "coding-standards-apply/phpcs": [
             "vendor/bin/phpcbf --standard=phpcs.xml.dist"
         ],
-        "coding-standards-apply": [
-            "@coding-standards-apply/phpcs"
+        "coding-standards-check": [
+            "@coding-standards-check/phpcs"
+        ],
+        "coding-standards-check/phpcs": [
+            "vendor/bin/phpcs --standard=phpcs.xml.dist"
         ]
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\os2forms_failed_jobs\Plugin\views\field;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -34,9 +35,10 @@ class WebformSubmissionCreated extends Date {
     $plugin_definition,
     DateFormatterInterface $date_formatter,
     EntityStorageInterface $date_format_storage,
+    TimeInterface $time,
     protected Helper $helper,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $date_formatter, $date_format_storage);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $date_formatter, $date_format_storage, $time);
   }
 
   /**
@@ -51,6 +53,7 @@ class WebformSubmissionCreated extends Date {
       $plugin_definition,
       $container->get('date.formatter'),
       $container->get('entity_type.manager')->getStorage('date_format'),
+      $container->get('datetime.time'),
       $container->get(Helper::class),
     );
   }
@@ -58,7 +61,7 @@ class WebformSubmissionCreated extends Date {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array<string, mixed> $options
+   * @phpstan-param array<mixed>|null $options
    * @phpstan-return void
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL): void {

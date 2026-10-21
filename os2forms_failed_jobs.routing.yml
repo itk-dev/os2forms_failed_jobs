@@ -1,75 +1,75 @@
 entity.webform.error_log:
-  path: '/admin/structure/webform/manage/{webform}/results/error-log'
+  path: "/admin/structure/webform/manage/{webform}/results/error-log"
   defaults:
     _controller: '\Drupal\os2forms_failed_jobs\Controller\Controller::render'
     _title_callback: '\Drupal\os2forms_failed_jobs\Controller\Controller::title'
   options:
     parameters:
       webform:
-        type: 'entity:webform'
+        type: "entity:webform"
   requirements:
-    _permission: 'access webform advanced queue overview'
-    _entity_access: 'webform.submission_view_any'
+    _permission: "access webform advanced queue overview"
+    _entity_access: "webform.submission_view_any"
     _custom_access: '\Drupal\webform\Access\WebformEntityAccess:checkLogAccess'
 
 entity.webform.error_log.personalized:
-  path: '/failed-jobs/my-forms'
+  path: "/failed-jobs/my-forms"
   defaults:
     _controller: '\Drupal\os2forms_failed_jobs\Controller\Controller::myFormErrors'
     _title_callback: '\Drupal\os2forms_failed_jobs\Controller\Controller::myTitle'
   requirements:
-    _permission: 'access webform advanced queue overview'
+    _permission: "access webform advanced queue overview"
 
 advancedqueue.job.retry:
-  path: '/admin/config/system/queues/{advancedqueue_queue}/jobs/{job_id}/retry'
+  path: "/admin/config/system/queues/{advancedqueue_queue}/jobs/{job_id}/retry"
   defaults:
     _form: '\Drupal\os2forms_failed_jobs\Form\RetryJob'
-    _title: 'Retry job'
+    _title: "Retry job"
   requirements:
-    _permission: 'access webform advanced queue overview'
+    _permission: "access webform advanced queue overview"
 
 advancedqueue.job.handle_manually:
-  path: '/admin/config/system/queues/{advancedqueue_queue}/jobs/{job_id}/handle_manually'
+  path: "/admin/config/system/queues/{advancedqueue_queue}/jobs/{job_id}/handle_manually"
   defaults:
     _form: '\Drupal\os2forms_failed_jobs\Form\HandleJobManually'
-    _title: 'Handle manually'
+    _title: "Handle manually"
   requirements:
-    _permission: 'access webform advanced queue overview'
+    _permission: "access webform advanced queue overview"
 
 os2forms_failed_jobs.bulk_confirm_form:
-  path: '/os2forms_failed_jobs/jobs/bulk_confirm_form'
+  path: "/os2forms_failed_jobs/jobs/bulk_confirm_form"
   defaults:
     _form: '\Drupal\os2forms_failed_jobs\Form\BulkConfirmForm'
-    _title: 'Confirm action'
+    _title: "Confirm action"
   requirements:
-    _permission: 'access webform advanced queue overview'
+    _permission: "access webform advanced queue overview"
 
 os2forms_failed_jobs.advancedqueue.job.message:
-  path: '/os2forms_failed_jobs/{webform}/jobs/{job_id}/message'
+  path: "/os2forms_failed_jobs/{webform}/jobs/{job_id}/message"
   defaults:
     _controller: '\Drupal\os2forms_failed_jobs\Controller\Controller::jobMessage'
-    _title: 'Message'
+    _title: "Message"
   options:
     no_cache: TRUE
     parameters:
       webform:
-        type: 'entity:webform'
+        type: "entity:webform"
   requirements:
-    _permission: 'access webform advanced queue overview'
-    _entity_access: 'webform.submission_view_any'
+    _permission: "access webform advanced queue overview"
+    _entity_access: "webform.submission_view_any"
     _custom_access: '\Drupal\webform\Access\WebformEntityAccess:checkLogAccess'
 
 os2forms_failed_jobs.advancedqueue.job.retry_strategy:
-  path: '/os2forms_failed_jobs/{webform}/jobs/{job_id}/retry_strategy'
+  path: "/os2forms_failed_jobs/{webform}/jobs/{job_id}/retry_strategy"
   defaults:
     _controller: '\Drupal\os2forms_failed_jobs\Controller\Controller::retryStrategyMessage'
-    _title: 'Retry strategy'
+    _title: "Retry strategy"
   options:
     no_cache: TRUE
     parameters:
       webform:
-        type: 'entity:webform'
+        type: "entity:webform"
   requirements:
-    _permission: 'access webform advanced queue overview'
-    _entity_access: 'webform.submission_view_any'
+    _permission: "access webform advanced queue overview"
+    _entity_access: "webform.submission_view_any"
     _custom_access: '\Drupal\webform\Access\WebformEntityAccess:checkLogAccess'

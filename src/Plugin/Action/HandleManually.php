@@ -32,13 +32,6 @@ final class HandleManually extends ActionBase implements ContainerFactoryPluginI
   protected QueueInterface $queue;
 
   /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
    * The queue processor.
    *
    * @var \Drupal\advancedqueue\ProcessorInterface
@@ -46,23 +39,13 @@ final class HandleManually extends ActionBase implements ContainerFactoryPluginI
   protected ProcessorInterface $processor;
 
   /**
-   * Failed jobs helper.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
    * {@inheritdoc}
    *
    * @phpstan-param array<string, mixed> $configuration
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ProcessorInterface $processor, Helper $helper) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, protected EntityTypeManagerInterface $entityTypeManager, ProcessorInterface $processor, protected Helper $helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->entityTypeManager = $entity_type_manager;
     $this->processor = $processor;
-    $this->helper = $helper;
   }
 
   /**
@@ -70,6 +53,7 @@ final class HandleManually extends ActionBase implements ContainerFactoryPluginI
    *
    * @phpstan-param array<string, mixed> $configuration
    */
+  #[\Override]
   public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,

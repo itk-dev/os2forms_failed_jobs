@@ -3,6 +3,7 @@
 namespace Drupal\os2forms_failed_jobs\Plugin\views\filter;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Plugin\views\filter\StringFilter;
@@ -29,6 +30,7 @@ final class WebformLabelFilter extends StringFilter {
     Connection $connection,
     protected Helper $helper,
     protected RouteMatchInterface $routeMatch,
+    protected EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $connection);
   }
@@ -46,6 +48,7 @@ final class WebformLabelFilter extends StringFilter {
       $container->get('database'),
       $container->get(Helper::class),
       $container->get('current_route_match'),
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -60,7 +63,10 @@ final class WebformLabelFilter extends StringFilter {
     $table = array_key_first($query->tables);
 
     $input = $this->value;
-    $webformQuery = \Drupal::entityQuery('webform');
+    $webformQuery = $this->entityTypeManager
+      ->getStorage('webform')
+      ->getQuery()
+      ->accessCheck(FALSE);
     $webformQuery->condition('title', $input, 'CONTAINS');
     $webforms = $webformQuery->execute();
     $jobs = ['0'];

@@ -20,21 +20,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class WebformId extends FieldPluginBase {
 
   /**
-   * The helper service.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
    * Class constructor.
    *
    * @phpstan-param array<string, mixed> $configuration
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, Helper $helper) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, protected Helper $helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->helper = $helper;
   }
 
   /**
@@ -54,7 +45,7 @@ final class WebformId extends FieldPluginBase {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array<string, mixed> $options
+   * @phpstan-param array<mixed>|null $options
    * @phpstan-return void
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL): void {

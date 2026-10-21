@@ -18,27 +18,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class Controller extends ControllerBase {
 
   /**
-   * Failed jobs helper.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
-   * Request stack.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
-   */
-  protected RequestStack $requestStack;
-
-  /**
-   * Request stack.
-   *
-   * @var \Drupal\Core\Render\RendererInterface
-   */
-  protected RendererInterface $renderer;
-
-  /**
    * Request stack.
    *
    * @var \Drupal\advancedqueue\JobTypeManager
@@ -48,17 +27,15 @@ final class Controller extends ControllerBase {
   /**
    * Failed jobs constructor.
    */
-  public function __construct(EntityTypeManager $entityTypeManager, Helper $helper, RequestStack $requestStack, RendererInterface $renderer, JobTypeManager $jobTypeManager) {
+  public function __construct(EntityTypeManager $entityTypeManager, protected Helper $helper, protected RequestStack $requestStack, protected RendererInterface $renderer, JobTypeManager $jobTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
-    $this->helper = $helper;
-    $this->requestStack = $requestStack;
-    $this->renderer = $renderer;
     $this->jobTypeManager = $jobTypeManager;
   }
 
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container): Controller {
     return new static(
       $container->get('entity_type.manager'),

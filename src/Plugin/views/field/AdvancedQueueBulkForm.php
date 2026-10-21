@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Routing\ResettableStackedRouteMatchInterface;
 use Drupal\Core\TempStore\PrivateTempStore;
 use Drupal\os2forms_failed_jobs\Helper\Helper;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
@@ -34,6 +35,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
     LanguageManagerInterface $language_manager,
     MessengerInterface $messenger,
     EntityRepositoryInterface $entity_repository,
+    ResettableStackedRouteMatchInterface $route_match,
     protected Helper $helper,
     protected PrivateTempStore $tempStore,
   ) {
@@ -44,7 +46,8 @@ final class AdvancedQueueBulkForm extends BulkForm {
       $entity_type_manager,
       $language_manager,
       $messenger,
-      $entity_repository
+      $entity_repository,
+      $route_match,
     );
   }
 
@@ -62,6 +65,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
       $container->get('language_manager'),
       $container->get('messenger'),
       $container->get('entity.repository'),
+      $container->get('current_route_match'),
       $container->get(Helper::class),
       $container->get('tempstore.private')->get('os2forms_failed_jobs_bulk_confirmation')
     );
@@ -70,7 +74,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array<string, mixed> $options
+   * @phpstan-param array<mixed>|null $options
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, &$options = NULL): void {
     parent::init($view, $display, $options);
@@ -100,7 +104,7 @@ final class AdvancedQueueBulkForm extends BulkForm {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array<string, mixed> $form
+   * @phpstan-param array<mixed> $form
    */
   public function viewsForm(&$form, FormStateInterface $form_state): void {
     // Make sure we do not accidentally cache this form.

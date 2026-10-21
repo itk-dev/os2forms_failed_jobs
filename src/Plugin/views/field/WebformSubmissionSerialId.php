@@ -20,9 +20,10 @@ class WebformSubmissionSerialId extends WebformSubmissionId {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array<string, mixed> $options
+   * @phpstan-param array<mixed>|null $options
    * @phpstan-return void
    */
+  #[\Override]
   public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL): void {
     parent::init($view, $display, $options);
 
@@ -41,6 +42,7 @@ class WebformSubmissionSerialId extends WebformSubmissionId {
    *
    * @throws \Exception
    */
+  #[\Override]
   public function render(ResultRow $values): MarkupInterface|string|ViewsRenderPipelineMarkup {
     if (isset($values->job_id)) {
       $serialId = $this->helper->getSubmissionSerialIdFromJob($values->job_id);

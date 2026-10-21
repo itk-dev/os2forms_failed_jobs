@@ -52,7 +52,7 @@ class WebformSubmissionId extends FieldPluginBase {
   /**
    * {@inheritdoc}
    *
-   * @phpstan-param array<string, mixed> $options
+   * @phpstan-param array<mixed>|null $options
    * @phpstan-return void
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL): void {

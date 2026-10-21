@@ -36,6 +36,7 @@ final class RetryJob extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container): RetryJob {
     return new static(
       $container->get('database'),
@@ -97,6 +98,7 @@ final class RetryJob extends ConfirmFormBase {
    * @phpstan-param array<string, mixed> $form
    * @phpstan-return array<string, mixed>
    */
+  #[\Override]
   public function buildForm(array $form, FormStateInterface $form_state, ?int $job_id = NULL): array {
     $this->jobId = $job_id;
 

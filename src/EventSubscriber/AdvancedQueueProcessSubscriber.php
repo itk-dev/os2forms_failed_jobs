@@ -15,20 +15,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class AdvancedQueueProcessSubscriber implements EventSubscriberInterface {
 
   /**
-   * The os2forms_failed_jobs helper.
-   *
-   * @var \Drupal\os2forms_failed_jobs\Helper\Helper
-   */
-  protected Helper $helper;
-
-  /**
    * The AdvancedQueueProcessSubscriber constructor.
    *
    * @param \Drupal\os2forms_failed_jobs\Helper\Helper $helper
    *   The helper service for os2forms_failed_jobs module.
    */
-  public function __construct(Helper $helper) {
-    $this->helper = $helper;
+  public function __construct(protected Helper $helper) {
   }
 
   /**

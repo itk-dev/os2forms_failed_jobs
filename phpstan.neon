@@ -1,0 +1,11 @@
+parameters:
+  level: 6
+  paths:
+    - src
+
+  ignoreErrors:
+    - '#Unsafe usage of new static\(\).#'
+
+# Local Variables:
+# mode: yaml
+# End:

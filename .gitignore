@@ -1,0 +1,9 @@
+/vendor/
+composer.lock
+/.editorconfig
+/.gitattributes
+.idea
+
+# DDEV stuff
+/web/
+/recipes/

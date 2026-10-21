@@ -10,6 +10,8 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Render\ViewsRenderPipelineMarkup;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Field handler to render custom queue operation for a given job.
@@ -21,9 +23,37 @@ use Drupal\views\ViewExecutable;
 class QueueOperations extends FieldPluginBase {
 
   /**
+   * Class constructor.
+   *
+   * @phpstan-param array<string, mixed> $configuration
+   */
+  public function __construct(
+    $configuration,
+    $plugin_id,
+    $plugin_definition,
+    protected RequestStack $requestStack,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
    * {@inheritdoc}
    *
-   * @phpstan-param array<string, mixed> $options
+   * @phpstan-param array<string, mixed> $configuration
+   */
+  public static function create(ContainerInterface $container, $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('request_stack'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @phpstan-param array<mixed>|null $options
    * @phpstan-return void
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL): void {
@@ -61,13 +91,14 @@ class QueueOperations extends FieldPluginBase {
 
     $queue_id = $this->getValue($values, 'queue_id');
     $job_id = $this->getValue($values, 'job_id');
+    $destination = $this->requestStack->getCurrentRequest()?->getRequestUri();
     $operations['retry'] = [
       'title' => $this->t('Retry'),
       'weight' => -10,
       'url' => Url::fromRoute('advancedqueue.job.retry', [
         'advancedqueue_queue' => $queue_id,
         'job_id' => $job_id,
-        'destination' => \Drupal::request()->getRequestUri(),
+        'destination' => $destination,
       ]),
     ];
     $operations['handle_manually'] = [
@@ -76,7 +107,7 @@ class QueueOperations extends FieldPluginBase {
       'url' => Url::fromRoute('advancedqueue.job.handle_manually', [
         'advancedqueue_queue' => $queue_id,
         'job_id' => $job_id,
-        'destination' => \Drupal::request()->getRequestUri(),
+        'destination' => $destination,
       ]),
     ];
 

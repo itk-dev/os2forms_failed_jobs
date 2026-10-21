@@ -1,10 +1,10 @@
-name: 'OS2Forms failed jobs'
+name: "OS2Forms failed jobs"
 type: module
-description: 'Provides failed job handling.'
-package: 'OS2Forms'
-core_version_requirement: ^9 || ^10
+description: "Provides failed job handling."
+package: "OS2Forms"
+core_version_requirement: ^10 || ^11
 dependencies:
-  - 'webform:webform'
-  - 'advancedqueue:advancedqueue'
-  - 'drupal:views'
-  - 'drupal:system'
+  - "webform:webform"
+  - "advancedqueue:advancedqueue"
+  - "drupal:views"
+  - "drupal:system"

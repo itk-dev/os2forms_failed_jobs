@@ -1,14 +1,15 @@
 services:
   Drupal\os2forms_failed_jobs\Helper\Helper:
-    arguments: [
-      '@entity_type.manager',
-      '@database',
-      '@logger.factory',
-      '@webform_submission_log.manager',
-      '@current_user'
-    ]
+    arguments:
+      [
+        "@entity_type.manager",
+        "@database",
+        "@logger.factory",
+        "@webform_submission_log.manager",
+        "@current_user",
+      ]
 
   Drupal\os2forms_failed_jobs\EventSubscriber\AdvancedQueueProcessSubscriber:
-    arguments: [ '@Drupal\os2forms_failed_jobs\Helper\Helper' ]
+    arguments: ['@Drupal\os2forms_failed_jobs\Helper\Helper']
     tags:
       - { name: event_subscriber }

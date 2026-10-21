@@ -381,7 +381,7 @@ class Helper {
         'webform_id' => $submission->getWebform()->id(),
       ];
     }
-    catch (\Exception $e) {
+    catch (\Exception) {
       return NULL;
     }
   }
@@ -431,7 +431,7 @@ class Helper {
           $this->removeQueueSubmissionRelation($entry->submission_id);
         }
       }
-      catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      catch (InvalidPluginDefinitionException | PluginNotFoundException) {
       }
 
     }

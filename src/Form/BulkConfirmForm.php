@@ -29,6 +29,7 @@ class BulkConfirmForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container): BulkConfirmForm {
     return new static(
       $container->get('tempstore.private')->get('os2forms_failed_jobs_bulk_confirmation'),
@@ -61,6 +62,7 @@ class BulkConfirmForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function getDescription(): TranslatableMarkup {
     $selections = $this->tempStore->get($this->helper->getCurrentUser()->id() . ':selection');
     if ($selections) {
@@ -87,13 +89,13 @@ class BulkConfirmForm extends ConfirmFormBase {
         '@action_label' => $selections['action']->get('label'),
       ]),
       'operations' => [],
-      'finished' => [get_class($this), 'batchFinished'],
+      'finished' => [static::class, 'batchFinished'],
     ];
 
     foreach ($selections['jobIds'] as $jobId) {
       if (!empty($jobId)) {
         $batch['operations'][] = [
-          [get_class($this), 'batchProcess'],
+          [static::class, 'batchProcess'],
           [$jobId, $selections['action']->id()],
         ];
       }
