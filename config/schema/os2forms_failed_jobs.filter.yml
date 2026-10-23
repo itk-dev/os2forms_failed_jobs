@@ -1,15 +1,15 @@
 views.filter_value.advancedqueue_job_submission_created:
   type: views.filter_value.numeric
-  label: "Date"
+  label: 'Date'
   mapping:
     type:
       type: string
-      label: "Type"
+      label: 'Type'
 
 views.filter.advancedqueue_job_submission_created:
   type: views.filter.numeric
-  label: "Date"
+  label: 'Date'
   mapping:
     type:
       type: string
-      label: "Type"
+      label: 'Type'

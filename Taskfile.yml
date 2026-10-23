@@ -19,6 +19,7 @@ tasks:
       - task: coding-standards:markdown:apply
       - task: coding-standards:php:apply
       - task: coding-standards:yaml:apply
+      - task: coding-standards:twig:apply
 
   coding-standards:check:
     desc: "Check coding standards"
@@ -27,6 +28,7 @@ tasks:
       - task: coding-standards:markdown:check
       - task: coding-standards:php:check
       - task: coding-standards:yaml:check
+      - task: coding-standards:twig:check
 
   coding-standards:composer:apply:
     desc: "Apply coding standards for composer"
@@ -56,6 +58,19 @@ tasks:
       - task: coding-standards:markdown:apply
       # Cf. .github/workflows/markdown.yaml
       - docker compose run --rm markdownlint markdownlint '**/*.md'
+
+  coding-standards:twig:apply:
+    desc: "Apply coding standards for Twig"
+    cmds:
+      # Cf. .github/workflows/module.yaml
+      - ddev exec ./vendor/bin/twig-cs-fixer --fix
+
+  coding-standards:twig:check:
+    desc: "Apply and check coding standards for Twig"
+    cmds:
+      - task: coding-standards:twig:apply
+      # Cf. .github/workflows/module.yaml
+      - ddev exec ./vendor/bin/twig-cs-fixer
 
   coding-standards:php:apply:
     desc: "Apply coding standards for PHP"
@@ -111,14 +126,11 @@ tasks:
     desc: Start DDEV setup (https://github.com/ddev/ddev-drupal-contrib)
     # https://github.com/ddev/ddev-drupal-contrib
     cmds:
-      - ddev add-on get ddev/ddev-drupal-contrib
-      - ddev restart
+      - ddev start
       - task: composer:install:lenient
       # @todo Remove --no-security-blocking when possible.
       - ddev poser --no-interaction --no-security-blocking
       - ddev symlink-project
-      # Detect expected Drupal and PHP versions.
-      - ddev config --update
 
   composer:install:lenient:
     cmds:

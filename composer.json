@@ -20,7 +20,8 @@
         "drupal/coder": "^8.3",
         "ergebnis/composer-normalize": "^2.47",
         "mglaman/phpstan-drupal": "^2.0",
-        "palantirnet/drupal-rector": "^1.0"
+        "palantirnet/drupal-rector": "^1.0",
+        "vincentlanglet/twig-cs-fixer": "^3.5"
     },
     "repositories": [
         {
@@ -38,25 +39,5 @@
             "symfony/runtime": true
         },
         "sort-packages": true
-    },
-    "scripts": {
-        "code-analysis": [
-            "@code-analysis/drupal-check"
-        ],
-        "code-analysis/drupal-check": [
-            "vendor/bin/drupal-check --deprecations --analysis --exclude-dir='vendor' *.* src"
-        ],
-        "coding-standards-apply": [
-            "@coding-standards-apply/phpcs"
-        ],
-        "coding-standards-apply/phpcs": [
-            "vendor/bin/phpcbf --standard=phpcs.xml.dist"
-        ],
-        "coding-standards-check": [
-            "@coding-standards-check/phpcs"
-        ],
-        "coding-standards-check/phpcs": [
-            "vendor/bin/phpcs --standard=phpcs.xml.dist"
-        ]
     }
 }
